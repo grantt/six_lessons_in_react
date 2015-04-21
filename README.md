@@ -53,7 +53,7 @@ Six week collaborative learning course in React JS
   * Dead Code Elimination
   * Minification
   * Sharing Constants
-  * Non-detrministic resolution
+  * Non-deterministic resolution
   * Isolation
 * CSS in JS
   * CamelCase conversion
