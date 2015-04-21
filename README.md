@@ -47,5 +47,22 @@ Six week collaborative learning course in React JS
 *  Namespaced components
 
 ## Week 4 - CSS in React
+* Failures of traditional CSS
+  * Globals and Namespacing
+  * Dependencies
+  * Dead Code Elimination
+  * Minification
+  * Sharing Constants
+  * Non-detrministic resolution
+  * Isolation
+* CSS in JS
+  * CamelCase conversion
+  * Automatically add 'px'
+  * Replace commas with semicolons
+* Inline styles
+  * 'style' vs 'class'
+* Conditionals
+* Limitations
+
 
 ## Week 5 - Putting it all together
