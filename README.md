@@ -1,6 +1,9 @@
 # Six Weeks of React
 Six week collaborative learning course in React JS
 
+# Prerequisites
+For these lessons, I am assuming the user has a novice or greater understanding of HTML, Javascript, CSS, browser rendering, and the request-response process.
+
 # Syllabus
 
 ## Week 0 - Introduction, JSX, and Virtual DOM
@@ -35,16 +38,22 @@ Six week collaborative learning course in React JS
 *  Data Model
 *  Component State
 
+### Week 1 Exercises
+
 ## Week 2 - Event Handling, Forms, and Validation
 *  State in components
 *  Autobinding
 *  Event Delegation
+
+### Week 2 Exercises
 
 ## Week 3 - Advanced and Reusable Components
 *  Modularity and Separation of Responsibilities
 *  Ownership
 *  Children
 *  Namespaced components
+
+### Week 3 Exercises
 
 ## Week 4 - CSS in React
 * Failures of traditional CSS
@@ -64,5 +73,8 @@ Six week collaborative learning course in React JS
 * Conditionals
 * Limitations
 
+### Week 4 Exercises
 
 ## Week 5 - Putting it all together
+
+### Week 5 Exercises
