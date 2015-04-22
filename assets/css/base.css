@@ -1,0 +1,71 @@
+
+@font-face { font-family: Exo; font-weight: normal; src: url('../fonts/Exo2.0-Medium.otf'); }
+@font-face { font-family: Exo; font-weight: bold; src: url('../fonts/Exo2.0-Bold.otf');}
+@font-face { font-family: Exo; font-weight: bolder; src: url('../fonts/Exo2.0-Black.otf');}
+@font-face { font-family: Exo; font-weight: lighter; src: url('../fonts/Exo2.0-Thin.otf');}
+
+body {
+  background: #e9e9e9;
+  font-family: "Exo", "Helvetica Neue", Helvetica, Arial, sans-serif;;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  padding: 30px;
+}
+
+a {
+  color: #3299bb;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  background-color: #bcbcbc;
+  border: 1px solid #424242;
+  border-radius: 3px;
+  font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;
+  font-size: 12px;
+  margin: 0 2px;
+  padding: 0px 5px;
+}
+
+p, h1, h2, h3, h4 {
+  color: #424242;
+}
+h1, h2, h3, h4 {
+  font-weight: bold;
+  margin: 0 0 15px;
+  padding: 0;
+}
+
+h1 {
+  border-bottom: 1px solid #ff9900;
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 0 0 15px;
+  padding: 0;
+}
+
+h2 {
+  border-bottom: 1px solid #bcbcbc;
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+p, ul {
+  margin: 15px 0;
+}
+
+ul {
+  padding-left: 30px;
+}
