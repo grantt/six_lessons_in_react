@@ -33,6 +33,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 ### Exercises
 *  Set-up an environment
 *  Hello World
+*  Timer
 
 ## Week 1
 ### Components
