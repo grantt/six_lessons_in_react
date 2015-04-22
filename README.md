@@ -1,12 +1,12 @@
-# Six Weeks of React
-Six week collaborative learning course in React JS
+# Six Lessons in React
+Six lesson collaborative learning course in React JS
 
 # Prerequisites
 For these lessons, I am assuming the user has a novice or greater understanding of HTML, Javascript, CSS, browser rendering, and the request-response process.
 
 # Syllabus
 
-## Week 0
+## Lesson 0
 ### Introduction, JSX, and Virtual DOM
 *  Introduction
   *  What are we doing here?
@@ -35,7 +35,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 *  Hello World
 *  Timer
 
-## Week 1
+## Lesson 1
 ### Components
 *  Component Properties
 *  Component specification methods
@@ -61,7 +61,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ### Exercises
 
-## Week 2
+## Lesson 2
 ### Event Handling, Forms, and Validation
 *  State in components
 *  Autobinding
@@ -69,7 +69,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ### Exercises
 
-## Week 3
+## Lesson 3
 ###Advanced and Reusable Components
 *  Modularity and Separation of Responsibilities
 *  Ownership
@@ -78,7 +78,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ### Exercises
 
-## Week 4
+## Lesson 4
 ### CSS in React
 *  Failures of traditional CSS
   *  Globals and Namespacing
@@ -99,9 +99,9 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ### Exercises
 
-## Week 5
+## Lesson 5
 ###Putting it all together
 
-### Week 5 Exercises
+### Exercises
 
 ## Sources
