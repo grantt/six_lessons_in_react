@@ -15,14 +15,23 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 *  What is React JS?
   *  Lightweight open-source Javascript framework
     *  Simple, declarative, composable
-  *  What problems does it solve?
+*  Why Use It?
+  * Components are the future
+  * Efficiency gains
+  * A huge community
 *  JSX
   *  Faster, safer, easier
-  *  Compiled vs. in-browser JSX transformation
+  *  In-browser transformation
+  *  Precompiled transformation
   *  JSX conditionals
 *  Virtual DOM
+  *  Updating the DOM
+  *  Change detection in the virtual DOM
+    *  Pair-wise diffing
+    *  List-wise diffing
 
 ### Exercises
+*  Set-up an environment
 *  Hello World
 
 ## Week 1
