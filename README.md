@@ -8,17 +8,26 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ## Week 0
 ### Introduction, JSX, and Virtual DOM
-*  What is React JS and what problems does it solve?
-*  How does the virtual DOM work?
-*  Compiled vs. in-browser JSX transformation
-*  JSX conditionals
+*  Introduction
+  *  What are we doing here?
+  *  How does this whole thing work?
+  *  Modern Web Applications are hard
+*  What is React JS?
+  *  Lightweight open-source Javascript framework
+    *  Simple, declarative, composable
+  *  What problems does it solve?
+*  JSX
+  *  Faster, safer, easier
+  *  Compiled vs. in-browser JSX transformation
+  *  JSX conditionals
+*  Virtual DOM
 
 ### Exercises
 *  Hello World
 
 ## Week 1
 ### Components
-* Component Properties
+*  Component Properties
 *  Component specification methods
   *  render()
   *  getInitialState()
@@ -61,22 +70,22 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 
 ## Week 4
 ### CSS in React
-* Failures of traditional CSS
-  * Globals and Namespacing
-  * Dependencies
-  * Dead Code Elimination
-  * Minification
-  * Sharing Constants
-  * Non-deterministic resolution
-  * Isolation
-* CSS in JS
-  * CamelCase conversion
-  * Automatically add 'px'
-  * Replace commas with semicolons
-* Inline styles
+*  Failures of traditional CSS
+  *  Globals and Namespacing
+  *  Dependencies
+  *  Dead Code Elimination
+  *  Minification
+  *  Sharing Constants
+  *  Non-deterministic resolution
+  *  Isolation
+*  CSS in JS
+  *  CamelCase conversion
+  *  Automatically add 'px'
+  *  Replace commas with semicolons
+*  Inline styles
   * 'style' vs 'class'
-* Conditionals
-* Limitations
+*  Conditionals
+*  Limitations
 
 ### Exercises
 
@@ -84,3 +93,5 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 ###Putting it all together
 
 ### Week 5 Exercises
+
+## Sources
