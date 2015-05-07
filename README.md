@@ -31,12 +31,17 @@ For these lessons, I am assuming the user has a novice or greater understanding 
     *  List-wise diffing
 
 ### Exercises
-*  Set-up an environment
-*  Hello World
-*  Timer
+*  0.0 - Set-up an environment
+*  0.1 - Hello World
+*  0.2 - Timer
 
 ## Lesson 1
-### Components
+### Building Components
+* 1.0 - Your First Component
+* 1.1 - Rendering a component
+* 1.2 - Components with properties
+
+
 *  Component Properties
 *  Component specification methods
   *  render()
