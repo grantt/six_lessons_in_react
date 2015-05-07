@@ -29,11 +29,10 @@ For these lessons, I am assuming the user has a novice or greater understanding 
   *  Change detection in the virtual DOM
     *  Pair-wise diffing
     *  List-wise diffing
+* Flux
 
 ### Exercises
-*  0.0 - Set-up an environment
-*  0.1 - Hello World
-*  0.2 - Timer
+*  Set-up an environment
 
 ## Lesson 1
 ### Building Components
@@ -63,8 +62,6 @@ For these lessons, I am assuming the user has a novice or greater understanding 
     *  componentWillUnmount
 *  Data Model
 *  Component State
-
-### Exercises
 
 ## Lesson 2
 ### Event Handling, Forms, and Validation
