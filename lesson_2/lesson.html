@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <title>Lesson 2</title>
+      <link rel="stylesheet" href="../assets/css/base.css" />
+  </head>
+  <body>
+    <h1>Lesson 2</h1>
+    <div id="container">
+        <p>In the next few lessons we're going to build a live Markdown preview generator (kind of like <a href="http://dillinger.io">dillinger.io</a>). In order to do that we're going to need at least two React components - a Markdown input form + renderer - and a way to communicate Markdown input changes to the renderer. This where Flux comes in. Flux will manage user interactions and communicate the necessary data between React components.</p>
+
+        <h3>What is Flux?</h3>
+
+        <p>Flux is an application architecture that Facebook has developed to complement React. It is not a framework in and of itself, but rather a set of architectural concepts. There are already a few implementations of the Flux architecture that developers can use, all with their own interpretations of the Flux's principles.</p>
+
+        <p>The main principle behind the Flux architecture is a "Unidirectional data flow" and the architecture is made up of "actions", "dispatchers", "stores" and "views". In this architecture, React is the view layer. See the <a href="https://facebook.github.io/flux/docs/overview.html">Flux documentation</a> for a more detailed overview.</p>
+
+        <p>As we mentioned above, Flux is a set of architectural concepts and not a framework and already has several implmentations. (See <a href="https://reactjsnews.com/the-state-of-flux/">this article</a> for a comparison of available implementations.) For our tutorial we are going to use <a href="http://fluxxor.com/">Fluxxor</a> as our Flux implementation, since it preserves the main principles of Flux.</p>
+
+        <h1>Exercise</h1>
+
+        <p>Now that we know a little bit about Flux, let's put that knowledge to work. In this lesson we're going to start with our Markdown input component. This component will also have a "Generate Text" button that fetches some Lorem Ipsum from an API and adds that to the Markdown input. Add your code to assets/src/leeson_2/example.js as we walk through the steps.</p>
+
+        <p>Let's start with a React component that has a basic textfield and a "Generate Lorem Ipsum" button.</p>
+
+        <pre>
+          <code>
+            var MarkdownInput = React.createClass({
+              render: function() {
+                return (
+                  &lt;div&gt;
+                    &lt;textarea rows="10" cols="50" /&gt;
+                    &lt;button&gt;Get Lorem Ipsum!&lt;/button&gt;
+                  &lt;div&gt;
+                );
+              }
+            });
+          </code>
+        </pre>
+
+        <p>As we have it now, our component doesn't do anything. So let's add some console logging whenever the button is pushed. First we need to define a callback in the React component for the button click.</p>
+
+        <pre>
+          <code>
+            var MarkdownInput = React.createClass({
+              render: function() {
+                // code from previous step
+              },
+
+              handleLoremIpsumClick: function() {
+                console.log('Generating lorem ipsum...');
+              }
+            });
+          </code>
+        </pre>
+
+        <p>Now let's make sure that whenever the button is clicked, the callback we just defined is called. To do that we just need to define an "onClick" JSX attribute on the button like so:</p>
+
+        <pre>
+          <code>
+            &lt;button onClick={ this.handleLoremIpsumClick } &gt;Get Lorem Ipsum!&lt;/button&gt;
+          </code>
+        </pre>
+
+        <p>This doesn't have anything do with Flux though. So let's bring Fluxxor into the mix by adding a "generateLoremIpsum" Fluxxor action that we can trigger whenever the button is clicked.</p>
+
+        <pre>
+          <code>
+            var constants = {
+              GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM'
+            };
+
+            var actions = {
+              generateLoremIpsum: function() {
+                this.dispatch(constants.GENERATE_LOREM_IPSUM);
+              }
+            };
+          </code>
+        </pre>
+
+        <p>This action by itself doesn't do anything, so let's add a complimentary store that listens to the generate lorem ipsum action and console.log's whenever that action is dispatched.</p>
+
+        <pre>
+          <code>
+            var LoremIpsumStore = Fluxxor.createStore({
+              initialize: function() {
+                // reigsters the following callbacks with the dispatcher
+                this.bindActions(
+                  constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum
+                );
+              },
+
+              generateLoremIpsum:function() {
+                console.log('Generating lorem ipsum from the store....');
+              }
+            });
+          </code>
+        </pre>
+
+        <p>Now we need to make sure that our button click handler can trigger the "GENERATE_LOREM_IPSUM" action instead of console.logging directly. In order to do that we need to first instantiate our Fluxxor application and pass the Fluxxor object to our main component when we render it. We can do this by doing the following:</p>
+
+        <pre>
+          <code>
+            var stores = {
+              LoremIpsumStore: new LoremIpsumStore()
+            };
+
+            // register actions and stores with fluxxor application
+            // this creates a flux instance
+            var flux = new Fluxxor.Flux(stores, actions);
+
+            React.render(
+              &lt;MarkdownInput flux={ flux }/&gt;,
+              document.getElementById('container')
+            );
+          </code>
+        </pre>
+
+        <p>We also need to define a Flux mixin for our React component at the top of our js file.</p>
+
+        <pre>
+          <code>
+            var FluxMixin = Fluxxor.FluxMixin(React);
+          </code>
+        </pre>
+
+        <p>Now that we have all of our pre-requisites, let's alter our React component to trigger the generate lorem ipsum action whenever the button is clicked.</p>
+
+        <pre>
+          <code>
+            var MarkdownInput = React.createClass({
+              mixins: [FluxMixin],
+
+              handleLoremIpsumClick: function() {
+                var flux = this.getFlux();
+                flux.actions.generateLoremIpsum();
+              },
+
+              render: function() {
+                // render code stays the same
+              }
+            });
+          </code>
+        </pre>
+
+        <p>So far, the lorem ipsum button doesn't actually return any lorem ipsum text. Let's complicate things and make an API call to "loripsum.net/api" to get some real Lorem Ipsum text. This brings us to asynchronous actions using Fluxxor.</p>
+
+        <p>Asynchronous actions are not that bad. We just need to designate some new action constants and make sure that our store can handle successful or erroneous API calls.</p>
+
+        <p>First let's define some new constants for the API success or error responses we might encounter.</p>
+
+        <pre>
+          <code>
+            var constants = {
+              GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM'
+              GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
+              GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS'
+            };
+          </code>
+        </pre>
+
+        <p>Now we need to trigger an API call whenever the "GENERATE_LOREM_IPSUM" action is triggered. On the failure or sucess of that call, we can dispatch the respective action to the dispatcher. So the first argument to this.dispatch will be the action type, and the second will be the data (if any) we want to send to the stores that are listening.</p>
+
+        <pre>
+          <code>
+            var actions = {
+              generateLoremIpsum: function() {
+                // we should still dispatch the original action, in case any stores
+                // are listening for the first event, that kicks off the API call
+                this.dispatch(constants.GENERATE_LOREM_IPSUM);
+
+                var that = this;
+                $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
+                  if (statusText === 'success') {
+                    that.dispatch(constants.GENERATE_LOREM_IPSUM_SUCCESS, data);
+                  } else {
+                    that.dispatch(constants.GENERATE_LOREM_IPSUM_ERROR);
+                  }
+                });
+              }
+            };
+          </code>
+        </pre>
+
+        <p>Now that we're dispatching the success and error actions, let's alter the store to listen to those actions.</p>
+
+        <pre>
+          <code>
+            var LoremIpsumStore = Fluxxor.createStore({
+              initialize: function() {
+                // reigsters the following callbacks with the dispatcher
+                this.bindActions(
+                  constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
+                  constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
+                  constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError
+                );
+              },
+
+              generateLoremIpsum:function() {
+                console.log('Generating lorem ipsum from the store....');
+              },
+
+              generateLoremIpsumError: function() {
+                console.error('There was an error generating lorem ipsum...');
+              },
+
+              generateLoremIpsumSuccess: function(loremIpsum) {
+                console.log('Lorem ipsum received: ', loremIpsum);
+              }
+            });
+          </code>
+        </pre>
+
+        <p>But the store's not doing anything once we get the lorem ipsum. Let's change it so that we can pass along the lorem ipsum to the markdown input view.</p>
+
+        <pre>
+          <code>
+            generateLoremIpsumSuccess: function(loremIpsum) {
+              this.generatedIpsum = loremIpsum;
+              // tells whatever views are listening that the data has changed
+              this.emit('change');
+            }
+          </code>
+        </pre>
+
+        <p>Now to make sure it all works together, let's make sure that the Markdown input component can get state information from the LoremIpsumStore.</p>
+
+        <p>First we need to add a getState helper to the LoremIpsumStore.</p>
+
+        <pre>
+          <code>
+            getState: function() {
+              return {
+                loremIpsum: this.loremIpsum
+              };
+            }          
+          </code>
+        </pre>
+
+        <p>Now the Markdown input component cna get state information the store.</p>
+
+        <pre>
+          <code>
+            var Markdown
+          </code>
+        </pre>
+
+        <h1>Further Reading</h1>
+        <ul>
+          <li><a href="https://facebook.github.io/flux/docs/overview.html">The original Flux documentation.</a></li>
+          <li><a href="https://reactjsnews.com/the-state-of-flux/">Article comparing Flux implementations</a></li>
+          <li><a href="http://fluxxor.com/">Fluxxor documentation</a></li>
+        </ul>
+    </div>
+  </body>
+</html>
