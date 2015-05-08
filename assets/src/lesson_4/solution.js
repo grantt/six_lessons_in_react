@@ -3,10 +3,12 @@ var FluxMixin = Fluxxor.FluxMixin(React);
 
 // Action constants
 var constants = {
+    CLEAR_INPUT: 'CLEAR_INPUT',
     GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
     GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
     GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
-    UPDATE_PREVIEW: "UPDATE_PREVIEW"
+    UPDATE_PREVIEW: 'UPDATE_PREVIEW',
+    TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR'
 };
 
 var actions = {
@@ -24,8 +26,17 @@ var actions = {
             }
         });
     },
+
     updatePreview: function(currentMarkdownInput) {
         this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
+    },
+
+    clearInput: function() {
+        this.dispatch(constants.CLEAR_INPUT);
+    },
+
+    toggleSidebar: function() {
+        this.dispatch(constants.TOGGLE_SIDEBAR);
     }
 };
 
@@ -35,6 +46,7 @@ var MarkdownInputStore = Fluxxor.createStore({
 
         // reigsters the following callbacks with the dispatcher
         this.bindActions(
+            constants.CLEAR_INPUT, this.clearInput,
             constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
             constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
             constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
@@ -62,9 +74,36 @@ var MarkdownInputStore = Fluxxor.createStore({
         this.emit('change');
     },
 
+    clearInput: function() {
+        this.markdownInput = '';
+        this.emit('change');
+    },
+
     getState: function() {
         return {
             markdownInput: this.markdownInput
+        };
+    }
+});
+
+var NavigationStore = Fluxxor.createStore({
+    initialize: function() {
+        this.sidebarOpen = false;
+
+        this.bindActions(
+            constants.TOGGLE_SIDEBAR, this.toggleSidebar
+        );
+    },
+
+    toggleSidebar: function() {
+        this.sidebarOpen = !this.sidebarOpen;
+        console.log(this.sidebarOpen);
+        this.emit('change');
+    },
+
+    getState: function() {
+        return {
+            sidebarOpen: this.sidebarOpen
         };
     }
 });
@@ -146,9 +185,101 @@ var MarkdownPreview = React.createClass({
     }
 });
 
+
+// Subcomponents
+var TopNav = React.createClass({
+    mixins: [
+        FluxMixin
+    ],
+
+    handleSidebarToggle: function() {
+        var flux = this.getFlux();
+        flux.actions.toggleSidebar();
+    },
+
+    render: function() {
+        var classes = 'fa fa-lg ';
+        classes += this.props.sidebarOpen ? 'fa-times' : 'fa-bars';
+
+        return(
+            <ul>
+                <li onClick={ this.handleSidebarToggle }><i className={ classes } /></li>
+                <li>My Awesome Markdown preview generator</li>
+            </ul>
+        );
+    }
+});
+
+var Sidebar = React.createClass({
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+    ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('MarkdownInputStore').getState();
+    },
+
+    handleClear: function() {
+        var flux = this.getFlux();
+        flux.actions.clearInput();
+    },
+
+    setZeroClipboardText: function() {
+        if (this.state.clipboardClient) {
+            this.state.clipboardClient.setText(this.state.markdownInput);
+        }
+    },
+
+    componentDidMount: function() {
+        var client = new ZeroClipboard(document.getElementsByClassName('clipboard-li'));
+        this.setState({ clipboardClient: client });
+        this.setZeroClipboardText();
+    },
+
+    render: function() {
+        this.setZeroClipboardText();
+
+        if (this.props.sidebarOpen) {
+            return (
+                <ul className="fa-ul">
+                    <li onClick={ this.handleClear }><i className="fa-li fa fa-eraser"/>Clear</li>
+                    <li className='clipboard-li'><i className="fa-li fa fa-clipboard"/>Copy to Clipoard</li>
+                </ul>
+            );
+        } else {
+            return <ul></ul>;
+        }
+    }
+});
+
+// Controller View
+var Navigation = React.createClass({
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('NavigationStore')
+    ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('NavigationStore').getState();
+    },
+
+    render: function() {
+        return (
+            <div>
+                <Sidebar sidebarOpen={ this.state.sidebarOpen } />
+                <TopNav sidebarOpen={ this.state.sidebarOpen } />
+            </div> 
+        )
+    }
+});
+
 // Fluxxor application initialization and main rendering
 var stores = {
-    MarkdownInputStore: new MarkdownInputStore()
+    MarkdownInputStore: new MarkdownInputStore(),
+    NavigationStore: new NavigationStore()
 };
 
 // register actions and stores with fluxxor application
@@ -157,5 +288,10 @@ var flux = new Fluxxor.Flux(stores, actions);
 
 React.render(
     <MarkdownEditor />,
-    document.getElementById('container')
+    document.getElementById('markdown-container')
+);
+
+React.render(
+    <Navigation flux={ flux } />,
+    document.getElementById('nav-container')
 );

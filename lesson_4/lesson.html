@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <title>Lesson 4</title>
+      <link rel="stylesheet" href="../assets/css/base.css" />
+  </head>
+  <body>
+    <h1>Lesson 4</h1>
+    <div id="container">
+      <p>In this lesson we're going to talk about React controller-views. Controller-views in React are typically at the top of a hierarchy of views. They are responsible for listening to changes in state and passing the new data down to their children.</p>
+
+      <p>When new data arrives from the store, the controller-view sets its own state, which triggers a re-rendering of themselves and all of their children components.</p> 
+
+      <p>In order to familiarize ourselves with this concept, let's add a top nav and sidebar to our app. We want the top nav and sidebar to interact like they do in <a href="http://dillinger.io">dillinger.io</a>. So our controller-view in this exercise will be responsible for listening for changes in the state of the page and re-render the sidebar and top nav based on that. The primary piece of information we want to keep as the state is whether or not the sidebar is open.</p>
+
+      <p>So let's start with a simple top nav component. Feel free to implement it as you wish. But here's the top nav we came up with:</p>
+
+      <pre><code>var TopNav = React.createClass({
+  render: function() {
+    return(
+      &lt;ul&gt;
+        &lt;li&gt;&lt;i className="fa-times" /&gt;&lt;/li&gt;
+        &lt;li&gt;My Awesome Markdown preview generator&lt;/li&gt;
+      &lt;/ul&gt;
+    );
+  }
+});</code></pre>
+
+    <p>Now we need a sidebar component. We want the sidebar component to have some user actions too: 1) clear the current markdown input, and 2) copy the current input to the clipboard.</p>
+
+    <pre><code>var Sidebar = React.createClass({
+  mixins: [
+    FluxMixin,
+    Fluxxor.StoreWatchMixin('MarkdownInputStore')
+  ],
+
+  getStateFromFlux: function() {
+    var flux = this.getFlux();
+    return flux.store('MarkdownInputStore').getState();
+  },
+
+  handleClear: function() {
+    // handle markdown input clearing here
+  },
+
+  setZeroClipboardText: function() {
+    if (this.state.clipboardClient) {
+      this.state.clipboardClient.setText(this.state.markdownInput);
+    }
+  },
+
+  componentDidMount: function() {
+    var client = new ZeroClipboard(document.getElementsByClassName('clipboard-li'));
+    this.setState({ clipboardClient: client });
+    this.setZeroClipboardText();
+  },
+
+  render: function() {
+    this.setZeroClipboardText();
+
+    return (
+      &lt;ul className="fa-ul"&gt;
+        &lt;li onClick={ this.handleClear }&gt;&lt;i className="fa-li fa fa-eraser"/&gt;Clear&lt;/li&gt;
+        &lt;li className='clipboard-li'&gt;&lt;i className="fa-li fa fa-clipboard"/&gt;Copy to Clipoard&lt;/li&gt;
+      &lt;/ul&gt;
+    );
+  }
+});</code></pre> 
+
+    <p>We've intentionally left the handleClear handler blank. Use what you know about flux / fluxxor now to implement the right actions and store updates to clear the user input. We have however filled out the copy handler for you, since we're using an external library to implement that functionality.</p>
+
+    <p>Now that we have both a sidebar and top nav component, let's add them to a controller view we'll call the "Navigation component". The first step we need to do is first make sure that both the top nav and side bar component are rendered by the Navigation component.</p>
+
+    <pre><code>var Navigation = React.createClass({
+  render: function() {
+    return (
+      &lt;div&gt;
+        &lt;Sidebar /&gt;
+        &lt;TopNav /&gt;
+      &lt;/div&gt;
+    )
+  }
+});</code></pre>
+
+    <p>Now that we have both components in one controller view, we want to capture the user interaction that would trigger the open and closing of the sidebar. So let's add a click handler to the fa-times icon in the top nav. This handler should trigger an action and some state changes that the Navigation component can listen to. For keeping track of the sidebar state, I recommend creating a new "NavigationStore" since this is a diffrent logical domain than the "MarkdownInputStore".</p>
+
+    <pre><code>var TopNav = React.createClass({
+
+  handleSidebarToggle: function() {
+    // fill this out
+  },
+
+  render: function() {
+    return(
+      &lt;ul&gt;
+        &lt;li onClick={ this.handleSidebarToggle }&gt;&lt;i className="fa fa-bars" /&gt;&lt;/li&gt;
+        &lt;li&gt;My Awesome Markdown preview generator&lt;/li&gt;
+      &lt;/ul&gt;
+    );
+  }
+});</code></pre>
+
+    <p>Let's now alter the Navigation component to listen for updates to the sidebar state and pass that information to its children.</p>
+
+    <pre><code>var Navigation = React.createClass({
+  mixins: [
+    FluxMixin,
+    Fluxxor.StoreWatchMixin('NavigationStore')
+  ],
+
+  getStateFromFlux: function() {
+    var flux = this.getFlux();
+    return flux.store('NavigationStore').getState();
+  },
+
+  render: function() {
+    return (
+      &lt;div&gt;
+        &lt;Sidebar sidebarOpen={ this.state.sidebarOpen } /&gt;
+        &lt;TopNav sidebarOpen={ this.state.sidebarOpen } /&gt;
+      &lt;/div&gt;
+    )
+  }
+});</code></pre>
+
+    <p>Now that we have the sidebar state information in the children components let's alter the top nav component to show a close icon when the sidebar is open. This is what the top nav component's render function might look like now:</p>
+
+    <pre><code>render: function() {
+  var classes = 'fa fa-lg ';
+  classes += this.props.sidebarOpen ? 'fa-times' : 'fa-bars';
+
+  return(
+    &lt;ul&gt;
+      &lt;li onClick={ this.handleSidebarToggle }&gt;&lt;i className={ classes } /&gt;&lt;/li&gt;
+      &lt;li&gt;My Awesome Markdown preview generator&lt;/li&gt;
+    &lt;/ul&gt;
+  );
+}
+</code></pre>
+
+    <p>...and the sidebar component's render function might now look like:</p>
+
+    <pre><code>render: function() {
+  this.setZeroClipboardText();
+
+  if (this.props.sidebarOpen) {
+    return (
+      &lt;ul className="fa-ul"&gt;
+        &lt;li onClick={ this.handleClear }&gt;&lt;i className="fa-li fa fa-eraser"/&gt;Clear&lt;/li&gt;
+        &lt;li className='clipboard-li'&gt;&lt;i className="fa-li fa fa-clipboard"/&gt;Copy to Clipoard&lt;/li&gt;
+      &lt;/ul&gt;
+    );
+  } else {
+    return &lt;ul&gt;&lt;/ul&gt;;
+  }
+}</code></pre>
+
+    <p>For the moment the sidebar just returns an empty list when it's closed. In the next lesson we'll learn about CSS in React. After that we can always return the same HTML but dynamically set "display: none" on the whole component depending on whether or not the sidebar is open.</p>
+
+    </div>
+    <div id="footerNav">
+      <a href="../lesson_3/lesson.html">Previous Lesson</a> | <a href="../lesson_5/lesson.html">Next Lesson</a>
+    </div>
+  </body>
+</html>
