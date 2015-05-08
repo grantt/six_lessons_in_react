@@ -30,6 +30,11 @@ For these lessons, I am assuming the user has a novice or greater understanding 
     *  Pair-wise diffing
     *  List-wise diffing
 * Flux
+  * Data flow
+  * User input
+  * Dispatcher
+  * Stores
+  * Actions
 
 ### Exercises
 *  Set-up an environment
