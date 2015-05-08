@@ -76,3 +76,11 @@ p, ul {
 ul {
   padding-left: 30px;
 }
+
+#md-editor, #md-preview {
+    float: left;
+    width: 50%;
+}
+#container {
+    clear:both;
+}
