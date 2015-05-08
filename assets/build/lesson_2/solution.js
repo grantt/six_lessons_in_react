@@ -9,10 +9,10 @@ var constants = {
 };
 
 var actions = {
-    generateLoremIpsum: function() {
+    generateLoremIpsum: function(currentMarkdownInput) {
         // we should still dispatch the original action, in case any stores
         // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM);
+        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownInput);
 
         var that = this;
         $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
@@ -25,9 +25,9 @@ var actions = {
     }
 };
 
-var LoremIpsumStore = Fluxxor.createStore({
+var MarkdownInputStore = Fluxxor.createStore({
     initialize: function() {
-        this.generatedIpsum = '';
+        this.markdownInput = '';
 
         // reigsters the following callbacks with the dispatcher
         this.bindActions(
@@ -37,8 +37,9 @@ var LoremIpsumStore = Fluxxor.createStore({
         );
     },
 
-    generateLoremIpsum:function() {
+    generateLoremIpsum:function(currentInput) {
         console.log('Generating lorem ipsum from the store....');
+        this.markdownInput = currentInput;
     },
 
     generateLoremIpsumError: function() {
@@ -46,14 +47,14 @@ var LoremIpsumStore = Fluxxor.createStore({
     },
 
     generateLoremIpsumSuccess: function(loremIpsum) {
-        this.generatedIpsum = loremIpsum;
+        this.markdownInput += loremIpsum;
         // tells whatever views are listening that the data has changed
         this.emit('change');
     },
 
     getState: function() {
         return {
-            loremIpsum: this.generatedIpsum
+            markdownInput: this.markdownInput
         };
     }
 });
@@ -62,17 +63,25 @@ var LoremIpsumStore = Fluxxor.createStore({
 var MarkdownInput = React.createClass({displayName: "MarkdownInput",
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('LoremIpsumStore')
+        Fluxxor.StoreWatchMixin('MarkdownInputStore')
     ],
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('LoremIpsumStore').getState();
+        return flux.store('MarkdownInputStore').getState();
     },
 
     handleLoremIpsumClick: function() {
         var flux = this.getFlux();
-        flux.actions.generateLoremIpsum();
+        flux.actions.generateLoremIpsum(this.state.markdownInput);
+    },
+
+    // we need an onChange handler since React textarea elements
+    // with value attribetus are considered "controlled", and as such
+    // the textarea would not be editable by users. this makes the
+    // text area editable for users
+    handleOnChange: function(event) {
+        this.setState({ markdownInput: event.target.value });
     },
 
     render: function() {
@@ -81,7 +90,9 @@ var MarkdownInput = React.createClass({displayName: "MarkdownInput",
                 React.createElement("textarea", {
                     rows:  this.props.textareaRows, 
                     cols:  this.props.textAreaCols, 
-                    value:  this.state.loremIpsum}
+                    ref: "markdownTextarea", 
+                    value:  this.state.markdownInput, 
+                    onChange:  this.handleOnChange}
                 ), 
                 React.createElement("br", null), 
                 React.createElement("button", {onClick:  this.handleLoremIpsumClick}, "Get Lorem Ipsum!")
@@ -92,7 +103,7 @@ var MarkdownInput = React.createClass({displayName: "MarkdownInput",
 
 // Fluxxor application initialization and main rendering
 var stores = {
-    LoremIpsumStore: new LoremIpsumStore()
+    MarkdownInputStore: new MarkdownInputStore()
 };
 
 // register actions and stores with fluxxor application
