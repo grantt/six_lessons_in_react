@@ -10,10 +10,10 @@ var constants = {
 };
 
 var actions = {
-    generateLoremIpsum: function(currentMarkdownInput) {
+    generateLoremIpsum: function() {
         // we should still dispatch the original action, in case any stores
         // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownInput);
+        this.dispatch(constants.GENERATE_LOREM_IPSUM);
 
         var that = this;
         $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
@@ -44,7 +44,6 @@ var MarkdownInputStore = Fluxxor.createStore({
 
     generateLoremIpsum:function(currentInput) {
         console.log('Generating lorem ipsum from the store....');
-        this.markdownInput = currentInput;
     },
 
     generateLoremIpsumError: function() {
@@ -105,17 +104,9 @@ var MarkdownInput = React.createClass({
         flux.actions.generateLoremIpsum(this.state.markdownInput);
     },
 
-    // we need an onChange handler since React textarea elements
-    // with value attributes are considered "controlled", and as such
-    // the textarea would not be editable by users. this makes the
-    // text area editable for users
     handleOnChange: function(event) {
-        this.setState({ markdownInput: event.target.value });
-    },
-
-    handleOnKeyUp: function(event) {
         var flux = this.getFlux();
-        flux.actions.updatePreview(this.state.markdownInput);
+        flux.actions.updatePreview(event.target.value);
     },
 
     render: function() {
@@ -127,7 +118,6 @@ var MarkdownInput = React.createClass({
                     ref="markdownTextarea"
                     value={ this.state.markdownInput }
                     onChange={ this.handleOnChange }
-                    onKeyUp={ this.handleOnKeyUp }
                 />
                 <br />
                 <button onClick={ this.handleLoremIpsumClick }>Get Lorem Ipsum!</button>
