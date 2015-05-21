@@ -323,10 +323,8 @@ var DocumentsStore = Fluxxor.createStore({
         this.emit('change');
     },
 
-    generateLoremIpsum:function(payload) {
+    generateLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
-        this.activeDocument.text = payload.text;
-        this.emit('change');
     },
 
     generateLoremIpsumError: function() {
@@ -460,6 +458,12 @@ var MarkdownEditor = React.createClass({
             background: '#26768E',
             padding: '10px 20px 10px 20px',
             textDecoration: null
+        },
+        titleEdit: {
+            fontSize: '2em',
+            fontWeight: 'bold',
+            border: '1px solid #666666',
+            background: 'none'
         }
     },
 
@@ -474,7 +478,7 @@ var MarkdownEditor = React.createClass({
 
     handleLoremIpsumClick: function() {
         var flux = this.getFlux();
-        flux.actions.generateLoremIpsum(this.state.markdownInput);
+        flux.actions.generateLoremIpsum();
     },
 
     // we need an onChange handler since React textarea elements
@@ -515,7 +519,7 @@ var MarkdownEditor = React.createClass({
     render: function() {
         var header;
         if (this.state.activeEdit === true) {
-            header = <input type='text' placeholder={this.state.activeDocument.title} onBlur={this.saveDocumentTitle}/>;
+            header = <input type='text' placeholder={this.state.activeDocument.title} onBlur={this.saveDocumentTitle} ref="titleInput" style={this.styles.titleEdit}/>;
         } else {
             header = <h2>{this.state.activeDocument.title} Editor</h2>;
         }
