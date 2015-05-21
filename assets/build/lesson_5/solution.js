@@ -52,8 +52,8 @@ var actions = {
         this.dispatch(constants.DELETE_DOCUMENT);
     },
 
-    selectDocument: function(selectedDocument) {
-        this.dispatch(constants.SELECT_DOCUMENT, selectedDocument);
+    selectDocument: function(selectedDoc) {
+        this.dispatch(constants.SELECT_DOCUMENT, selectedDoc);
     },
 
     editDocumentTitle: function(title) {
@@ -69,8 +69,127 @@ var actions = {
     }
 };
 
+// Base CSS styles
+var styles = {
+    li: {
+        padding: '5px',
+        display: 'inline-block',
+        listStyleType: 'none',
+        marginRight: '15px',
+        cursor: 'pointer'
+    }
+};
+
+// Stores
+var DocumentsStore = Fluxxor.createStore({
+    mixins: [
+        FluxMixin
+    ],
+
+    initialize: function() {
+        this.documents = [];
+        this.activeDocument = null;
+        this.isEditActive = false;
+
+        this.bindActions(
+            constants.CREATE_DOCUMENT, this.onCreateDocument,
+            constants.DELETE_DOCUMENT, this.onDeleteDocument,
+            constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
+            constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
+            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
+            constants.CLEAR_INPUT, this.onClearInput,
+            constants.UPDATE_PREVIEW, this.onUpdatePreview,
+            constants.SELECT_DOCUMENT, this.onSelectDocument
+        );
+        this.onCreateDocument();
+    },
+
+    onCreateDocument: function() {
+        _.each(this.documents, function(document){
+            document.selected = false;
+        });
+        var id = _.uniqueId();
+        var newDoc = {id: id, title: 'Untitled_'+id, text: ''};
+        this.documents.push(newDoc);
+
+        this.activeDocument = newDoc;
+
+        this.emit('change');
+    },
+
+    onDeleteDocument: function() {
+        var that = this;
+        this.documents = this.documents.filter(function(document) {
+            return document.id != that.activeDocument.id
+        });
+
+        this.activeDocument = _.last(this.documents);
+
+        this.emit('change');
+    },
+
+    onSelectDocument: function(payload) {
+        _.each(this.documents, function(document){
+            document.selected = false;
+        });
+
+        this.activeDocument = _.findWhere(this.documents, {id: payload.id});
+
+        this.emit('change');
+    },
+
+    onEditDocumentTitle: function() {
+        this.isEditActive = true;
+
+        this.emit('change');
+    },
+
+    onSaveDocumentTitle: function(title) {
+        this.isEditActive = false;
+        this.activeDocument.title = title;
+
+        this.emit('change');
+    },
+
+    generateLoremIpsum:function() {
+        console.log('Generating lorem ipsum from the store....');
+    },
+
+    generateLoremIpsumError: function() {
+        console.error('There was an error generating lorem ipsum...');
+    },
+
+    generateLoremIpsumSuccess: function(loremIpsum) {
+        this.activeDocument.text += loremIpsum;
+
+        this.emit('change');
+    },
+
+    onUpdatePreview: function(payload) {
+        this.activeDocument.text = payload;
+
+        this.emit('change');
+    },
+
+    onClearInput: function() {
+        this.activeDocument.text = '';
+
+        this.emit('change');
+    },
+
+    getState: function() {
+        return {
+            documents: this.documents,
+            activeDocument: this.activeDocument,
+            isEditActive: this.isEditActive
+        };
+    }
+});
+
 // Subcomponents
-var TopNav = React.createClass({displayName: "TopNav",
+var TabBar = React.createClass({displayName: "TabBar",
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -85,11 +204,11 @@ var TopNav = React.createClass({displayName: "TopNav",
         ul: {
             padding: '0px 0px',
             margin: '0% 0% 0% 12%',
-            listStyle: 'none',
-            overflow: 'auto'
+            listStyle: 'none'
         },
         li: {
-            display: 'inline',
+            padding: '5px',
+            display: 'inline-block',
             listStyleType: 'none',
             marginRight: '15px',
             cursor: 'pointer'
@@ -102,7 +221,6 @@ var TopNav = React.createClass({displayName: "TopNav",
     },
 
     handleNewDocument: function() {
-        console.log("click!!!");
         var flux = this.getFlux();
         flux.actions.createDocument();
     },
@@ -120,7 +238,7 @@ var TopNav = React.createClass({displayName: "TopNav",
                         }
                         return React.createElement(DocumentTab, {data: doc, key: doc.id});
                     }), 
-                    React.createElement("li", {style: this.styles.li, onClick:  this.handleNewDocument}, React.createElement("i", {className:  classes }))
+                    React.createElement("li", {style: styles.li, onClick:  this.handleNewDocument}, React.createElement("i", {className:  classes }))
                 )
             )
         );
@@ -133,22 +251,10 @@ var DocumentTab = React.createClass({displayName: "DocumentTab",
     ],
 
     styles : {
-        li: {
-            display: 'inline',
-            listStyleType: 'none',
-            cursor: 'pointer',
-            marginRight: '15px',
-            padding: '5px'
-        },
-        selectedLi: {
-            display: 'inline',
-            listStyleType: 'none',
-            cursor: 'pointer',
-            marginRight: '15px',
-            padding: '5px',
+        selectedLi: _.extend({}, styles.li, {
             background: '#666666',
-            fontWeight: 'bold'
-        }
+            color: '#f0f0f0'
+        })
     },
     handleSelect: function() {
         var flux = this.getFlux();
@@ -163,7 +269,7 @@ var DocumentTab = React.createClass({displayName: "DocumentTab",
     render: function() {
         return (
             React.createElement("li", {
-                style: this.props.data.selected && this.styles.selectedLi || this.styles.li, 
+                style: this.props.data.selected && this.styles.selectedLi || styles.li, 
                 onClick:  this.handleSelect
             }, this.props.data.title)
         );
@@ -217,7 +323,6 @@ var Sidebar = React.createClass({displayName: "Sidebar",
     },
 
     handleRename: function() {
-        console.log("rename");
         var flux = this.getFlux();
         flux.actions.editDocumentTitle();
     },
@@ -253,147 +358,7 @@ var Sidebar = React.createClass({displayName: "Sidebar",
     }
 });
 
-var DocumentsStore = Fluxxor.createStore({
-    mixins: [
-        FluxMixin
-    ],
-
-    initialize: function() {
-        this.documents = [];
-
-        this.bindActions(
-            constants.CREATE_DOCUMENT, this.onCreateDocument,
-            constants.DELETE_DOCUMENT, this.onDeleteDocument,
-            constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
-            constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
-            constants.CLEAR_INPUT, this.onClearInput,
-            constants.UPDATE_PREVIEW, this.onUpdatePreview,
-            constants.SELECT_DOCUMENT, this.onSelectDocument
-        );
-        this.onCreateDocument();
-    },
-
-    onCreateDocument: function() {
-        _.each(this.documents, function(document){
-            document.selected = false;
-        });
-        var id = _.uniqueId();
-        var newDoc = {id: id, title: 'Untitled_'+id, text: ''};
-        this.documents.push(newDoc);
-
-        this.activeDocument = newDoc;
-
-        this.emit('change');
-    },
-
-    onDeleteDocument: function() {
-        var that = this;
-        this.documents = this.documents.filter(function(document) {
-            return document.id != that.activeDocument.id
-        });
-
-        this.activeDocument = _.last(this.documents);
-
-        this.emit('change');
-    },
-
-    onSelectDocument: function(payload) {
-        _.each(this.documents, function(document){
-            document.selected = false;
-        });
-
-        this.activeDocument = _.findWhere(this.documents, {id: payload.id});
-
-        this.emit('change');
-    },
-
-    onEditDocumentTitle: function() {
-        this.activeEdit = true;
-
-        this.emit('change');
-    },
-
-    onSaveDocumentTitle: function(title) {
-        this.activeEdit = false;
-        this.activeDocument.title = title;
-
-        this.emit('change');
-    },
-
-    generateLoremIpsum:function() {
-        console.log('Generating lorem ipsum from the store....');
-    },
-
-    generateLoremIpsumError: function() {
-        console.error('There was an error generating lorem ipsum...');
-    },
-
-    generateLoremIpsumSuccess: function(loremIpsum) {
-        // tells whatever views are listening that the data has changed
-        this.activeDocument.text += loremIpsum;
-        this.emit('change');
-    },
-
-    onUpdatePreview: function(payload) {
-        // tells whatever views are listening that the data has changed
-        this.activeDocument.text = payload;
-        this.emit('change');
-    },
-
-    onClearInput: function() {
-        // tells whatever views are listening that the data has changed
-        this.activeDocument.text = '';
-        this.emit('change');
-    },
-
-    getState: function() {
-        return {
-            documents: this.documents,
-            activeDocument: this.activeDocument,
-            activeEdit: this.activeEdit
-        };
-    }
-});
-
-// Markdown Viewer component
-var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
-    mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
-    ],
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
-    },
-
-    render: function() {
-        if (this.state.documents.length > 0) {
-            return (
-                React.createElement("div", null, 
-                    React.createElement(MarkdownEditor, {
-                        flux:  flux, 
-                        textareaRows: "10", 
-                        textAreaCols: "50"}
-                    ), 
-                    React.createElement(MarkdownPreview, {
-                        flux:  flux }
-                    )
-                )
-            )
-        } else {
-            return (
-                React.createElement("div", null)
-            )
-        }
-
-    }
-});
-
-// Markdown editor component
+// Markdown editor Subcomponent
 var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
     mixins: [
         FluxMixin,
@@ -514,7 +479,7 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
 
     render: function() {
         var header;
-        if (this.state.activeEdit === true) {
+        if (this.state.isEditActive === true) {
             header = React.createElement("input", {type: "text", defaultValue: this.state.activeDocument.title, onBlur: this.saveDocumentTitle, onKeyDown: this.handleTitleEditorKeyDown, ref: "titleInput", style: this.styles.titleEdit, autoFocus: "true"});
         } else {
             header = React.createElement("h2", null, this.state.activeDocument.title, " Editor");
@@ -542,7 +507,7 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
     }
 });
 
-// Markdown preview component
+// Markdown preview Subcomponent
 var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
     mixins: [
         FluxMixin,
@@ -597,7 +562,43 @@ var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
     }
 });
 
-// Controller View
+// Markdown Viewer Component
+var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentsStore')
+    ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentsStore').getState();
+    },
+
+    render: function() {
+        if (this.state.documents.length > 0) {
+            return (
+                React.createElement("div", null, 
+                    React.createElement(MarkdownEditor, {
+                        flux:  flux, 
+                        textareaRows: "10", 
+                        textAreaCols: "50"}
+                    ), 
+                    React.createElement(MarkdownPreview, {
+                        flux:  flux }
+                    )
+                )
+            )
+        } else {
+            return (
+                React.createElement("div", null)
+            )
+        }
+
+    }
+});
+
+
+// Application Controller View
 var Application = React.createClass({displayName: "Application",
     mixins: [
         FluxMixin
@@ -606,7 +607,7 @@ var Application = React.createClass({displayName: "Application",
     render: function() {
         return (
             React.createElement("div", null, 
-                React.createElement(TopNav, null), 
+                React.createElement(TabBar, null), 
                 React.createElement(Sidebar, null), 
                 React.createElement(MarkdownViewer, null)
             )
