@@ -9,21 +9,21 @@
     <h1>Lesson 3 - Multiple and Advanced Components</h1>
     <div id="container">
         <p>Next we will extend our nascent Markdown preview generator to actually preview the text entered into our first component. This means that the textarea component will need to pass data to the display component.</p>
-        <p>The preview component is relatively simple, it just needs to listen for any changes in the <code>MarkdownInputStore</code> and render the compiled markup as HTML. In order to properly listen to the store, we once again add <code>FluxMixin</code> and <code>Fluxxor.StoreWatchMixin</code> while adding a <code>getStateFromFlux</code> method. </p>
+        <p>The preview component is relatively simple, it just needs to listen for any changes in the <code>DocumentStore</code> and render the compiled markup as HTML. In order to properly listen to the store, we once again add <code>FluxMixin</code> and <code>Fluxxor.StoreWatchMixin</code> while adding a <code>getStateFromFlux</code> method. </p>
         <pre><code>var MarkdownPreview = React.createClass({
   mixins: [
     FluxMixin,
-    Fluxxor.StoreWatchMixin('MarkdownInputStore')
+    Fluxxor.StoreWatchMixin('DocumentStore')
   ],
   getStateFromFlux: function() {
     var flux = this.getFlux();
-    return flux.store('MarkdownInputStore').getState();
+    return flux.store('DocumentStore').getState();
   },
   render: function() {
     return ()
   }
 });</code></pre>
-        <p>Meanwhile, we need to register a corresponding action with the dispatcher and have the <code>MarkdownInputStore</code> to set the value of <code>markdownInput</code> via an <code>updatePreview</code> method and emit a change event.</p>
+        <p>Meanwhile, we need to register a corresponding action with the dispatcher and have the <code>DocumentStore</code> to set the value of <code>markdownInput</code> via an <code>updatePreview</code> method and emit a change event.</p>
         <pre><code>var constants = {
   // Previous code here
   UPDATE_PREVIEW: "UPDATE_PREVIEW"
@@ -36,7 +36,7 @@ var actions = {
   }
 };
 
-var MarkdownInputStore = Fluxxor.createStore({
+var DocumentStore = Fluxxor.createStore({
   // Previous code here
   updatePreview: function(currentInput) {
     // tells whatever views are listening that the data has changed
@@ -50,7 +50,7 @@ var MarkdownInputStore = Fluxxor.createStore({
   // Previous code here
   render: function() {
     return (
-      &lt;div dangerouslySetInnerHTML={ { __html: marked(this.state.markdownInput, {sanitize: true}) } } /&gt;
+      &lt;div dangerouslySetInnerHTML={{__html: marked(this.state.markdownInput, {sanitize: true})}} /&gt;
     )
   }
 });</code></pre>
@@ -60,12 +60,12 @@ var MarkdownInputStore = Fluxxor.createStore({
     return (
       &lt;div&gt;
         &lt;MarkdownInput
-          flux={ flux }
+          flux={flux}
           textareaRows="10"
           textAreaCols="50"
         /&gt;
         &lt;MarkdownPreview
-          flux={ flux }
+          flux={flux}
         /&gt;
       &lt;/div&gt;
     )
