@@ -77,6 +77,22 @@ var styles = {
         listStyleType: 'none',
         marginRight: '15px',
         cursor: 'pointer'
+    },
+    button: {
+        border: 0,
+        WebkitBorderRadius: 3,
+        MozBorderRadius: 3,
+        borderRadius: 3,
+        color: '#ffffff',
+        fontSize: 12,
+        background: '#3299bb',
+        padding: '10px 20px 10px 20px',
+        textDecoration: null
+    },
+    buttonHover: {
+        background: '#26768E',
+        padding: '10px 20px 10px 20px',
+        textDecoration: null
     }
 };
 
@@ -103,6 +119,7 @@ var DocumentsStore = Fluxxor.createStore({
             constants.UPDATE_PREVIEW, this.onUpdatePreview,
             constants.SELECT_DOCUMENT, this.onSelectDocument
         );
+
         this.onCreateDocument();
     },
 
@@ -189,7 +206,9 @@ var DocumentsStore = Fluxxor.createStore({
 });
 
 // Subcomponents
-var TabBar = React.createClass({displayName: "TabBar",
+var TabBar = React.createClass({
+    displayName : 'TabBar',
+
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -238,14 +257,16 @@ var TabBar = React.createClass({displayName: "TabBar",
                         }
                         return React.createElement(DocumentTab, {data: doc, key: doc.id});
                     }), 
-                    React.createElement("li", {style: styles.li, onClick:  this.handleNewDocument}, React.createElement("i", {className:  classes }))
+                    React.createElement("li", {style: styles.li, onClick: this.handleNewDocument}, React.createElement("i", {className: classes}))
                 )
             )
         );
     }
 });
 
-var DocumentTab = React.createClass({displayName: "DocumentTab",
+var DocumentTab = React.createClass({
+    displayName : 'DocumentTab',
+
     mixins: [
         FluxMixin
     ],
@@ -256,6 +277,7 @@ var DocumentTab = React.createClass({displayName: "DocumentTab",
             color: '#f0f0f0'
         })
     },
+
     handleSelect: function() {
         var flux = this.getFlux();
         flux.actions.selectDocument(this.props.data);
@@ -269,14 +291,16 @@ var DocumentTab = React.createClass({displayName: "DocumentTab",
     render: function() {
         return (
             React.createElement("li", {
-                style: this.props.data.selected && this.styles.selectedLi || styles.li, 
-                onClick:  this.handleSelect
+                style: this.props.data.selected ? this.styles.selectedLi : styles.li, 
+                onClick: this.handleSelect
             }, this.props.data.title)
         );
     }
 });
 
-var Sidebar = React.createClass({displayName: "Sidebar",
+var Sidebar = React.createClass({
+    displayName : 'Sidebar',
+
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -334,8 +358,8 @@ var Sidebar = React.createClass({displayName: "Sidebar",
     },
 
     componentDidMount: function() {
-        var client = new ZeroClipboard(document.getElementsByClassName('clipboard-li'));
-        this.setState({ clipboardClient: client });
+        var client = new ZeroClipboard(document.getElementById('clipboard'));
+        this.setState({clipboardClient: client});
         this.setZeroClipboardText();
     },
 
@@ -343,14 +367,14 @@ var Sidebar = React.createClass({displayName: "Sidebar",
         this.setZeroClipboardText();
         var deleteLi;
         if (this.state.documents.length > 0) {
-            deleteLi = React.createElement("li", {style: this.styles.li, onClick:  this.handleDelete}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-trash-o"}), "Delete");
+            deleteLi = React.createElement("li", {style: this.styles.li, onClick: this.handleDelete}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-trash-o"}), "Delete");
         }
         return (
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("ul", {style: this.styles.ul}, 
-                    React.createElement("li", {style: this.styles.li, onClick:  this.handleRename}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-pencil"}), "Rename Document"), 
-                    React.createElement("li", {style: this.styles.li, className: "clipboard-li"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy Content"), 
-                    React.createElement("li", {style: this.styles.li, onClick:  this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear"), 
+                    React.createElement("li", {style: this.styles.li, onClick: this.handleRename}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-pencil"}), "Rename Document"), 
+                    React.createElement("li", {style: this.styles.li, id: "clipboard"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy Content"), 
+                    React.createElement("li", {style: this.styles.li, onClick: this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear"), 
                     deleteLi
                 )
             )
@@ -359,7 +383,9 @@ var Sidebar = React.createClass({displayName: "Sidebar",
 });
 
 // Markdown editor Subcomponent
-var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
+var MarkdownEditor = React.createClass({
+    displayName : 'MarkdownEditor',
+
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -384,28 +410,6 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
             border: 0,
             resize: 'vertical'
 
-        },
-        button: {
-            border: 0,
-            WebkitBorderRadius: 3,
-            MozBorderRadius: 3,
-            borderRadius: 3,
-            color: '#ffffff',
-            fontSize: 12,
-            background: '#3299bb',
-            padding: '10px 20px 10px 20px',
-            textDecoration: null
-        },
-        buttonHover: {
-            border: 0,
-            WebkitBorderRadius: 3,
-            MozBorderRadius: 3,
-            borderRadius: 3,
-            color: '#ffffff',
-            fontSize: 12,
-            background: '#26768E',
-            padding: '10px 20px 10px 20px',
-            textDecoration: null
         },
         titleEdit: {
             WebkitBoxSizing: 'border-box',
@@ -480,7 +484,14 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
     render: function() {
         var header;
         if (this.state.isEditActive === true) {
-            header = React.createElement("input", {type: "text", defaultValue: this.state.activeDocument.title, onBlur: this.saveDocumentTitle, onKeyDown: this.handleTitleEditorKeyDown, ref: "titleInput", style: this.styles.titleEdit, autoFocus: "true"});
+            header = (React.createElement("input", {
+                type: "text", 
+                defaultValue: this.state.activeDocument.title, 
+                onBlur: this.saveDocumentTitle, 
+                onKeyDown: this.handleTitleEditorKeyDown, 
+                style: this.styles.titleEdit, 
+                autoFocus: "true"}
+            ));
         } else {
             header = React.createElement("h2", null, this.state.activeDocument.title, " Editor");
         }
@@ -491,16 +502,16 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
                 React.createElement("textarea", {
                     style: this.styles.textarea, 
                     ref: "markdownTextarea", 
-                    data:  this.state.activeDocument.id, 
-                    value:  this.state.activeDocument.text, 
-                    onChange:  this.handleOnChange, 
-                    onKeyUp:  this.handleOnKeyUp}
+                    data: this.state.activeDocument.id, 
+                    value: this.state.activeDocument.text, 
+                    onChange: this.handleOnChange, 
+                    onKeyUp: this.handleOnKeyUp}
                 ), 
                 React.createElement("br", null), 
                 React.createElement("button", {
-                    style: this.state.buttonHover && this.styles.buttonHover || this.styles.button, 
-                    onMouseOver:  this.setHoverTrue, onMouseOut:  this.setHoverFalse, 
-                    onClick:  this.handleLoremIpsumClick
+                    style: this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button, 
+                    onMouseOver: this.setHoverTrue, onMouseOut: this.setHoverFalse, 
+                    onClick: this.handleLoremIpsumClick
                 }, "Get Lorem Ipsum!")
             )
         );
@@ -508,7 +519,9 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
 });
 
 // Markdown preview Subcomponent
-var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
+var MarkdownPreview = React.createClass({
+    displayName : 'MarkdownPreview',
+
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -541,16 +554,16 @@ var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
     render: function() {
         var div;
         if (this.state.activeDocument.text) {
-            div = React.createElement("div", {
+            div = (React.createElement("div", {
                 id: "mdPreview", 
                 style: this.styles.mdPreview, 
-                dangerouslySetInnerHTML:  { __html: marked(this.state.activeDocument.text, {sanitize: true})} }
-            );
+                dangerouslySetInnerHTML: {__html: marked(this.state.activeDocument.text, {sanitize: true})}}
+            ));
         } else {
-            div = React.createElement("div", {
+            div = (React.createElement("div", {
                 id: "mdPreview", 
                 style: this.styles.mdPreview}
-            );
+            ));
         }
 
         return (
@@ -563,7 +576,9 @@ var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
 });
 
 // Markdown Viewer Component
-var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
+var MarkdownViewer = React.createClass({
+    displayName : 'MarkdownViewer',
+
     mixins: [
         FluxMixin,
         Fluxxor.StoreWatchMixin('DocumentsStore')
@@ -579,12 +594,12 @@ var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
             return (
                 React.createElement("div", null, 
                     React.createElement(MarkdownEditor, {
-                        flux:  flux, 
+                        flux: flux, 
                         textareaRows: "10", 
                         textAreaCols: "50"}
                     ), 
                     React.createElement(MarkdownPreview, {
-                        flux:  flux }
+                        flux: flux}
                     )
                 )
             )
@@ -599,7 +614,9 @@ var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
 
 
 // Application Controller View
-var Application = React.createClass({displayName: "Application",
+var Application = React.createClass({
+    displayName : 'Application',
+    
     mixins: [
         FluxMixin
     ],
@@ -626,7 +643,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 
 React.render(
     React.createElement(Application, {
-        flux:  flux }
+        flux: flux}
     ),
     document.getElementById('container')
 );
