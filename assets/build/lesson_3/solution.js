@@ -6,14 +6,14 @@ var constants = {
     GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
     GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
     GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
-    UPDATE_PREVIEW: "UPDATE_PREVIEW"
+    UPDATE_PREVIEW: 'UPDATE_PREVIEW'
 };
 
 var actions = {
-    generateLoremIpsum: function() {
+    generateLoremIpsum: function(currentMarkdownEditor) {
         // we should still dispatch the original action, in case any stores
         // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM);
+        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownEditor);
 
         var that = this;
         $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
@@ -24,25 +24,31 @@ var actions = {
             }
         });
     },
-    updatePreview: function(currentMarkdownInput) {
-        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
+    updatePreview: function(currentMarkdownEditor) {
+        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownEditor);
     }
 };
 
-var MarkdownInputStore = Fluxxor.createStore({
-    initialize: function() {
-        this.markdownInput = '';
+// Stores
+var DocumentStore = Fluxxor.createStore({
+    mixins: [
+        FluxMixin
+    ],
 
-        // reigsters the following callbacks with the dispatcher
+    initialize: function() {
+        this.document = {
+            'text': ''
+        };
+
         this.bindActions(
             constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
             constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
             constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
-            constants.UPDATE_PREVIEW, this.updatePreview
+            constants.UPDATE_PREVIEW, this.onUpdatePreview
         );
     },
 
-    generateLoremIpsum:function(currentInput) {
+    generateLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
@@ -51,96 +57,142 @@ var MarkdownInputStore = Fluxxor.createStore({
     },
 
     generateLoremIpsumSuccess: function(loremIpsum) {
-        this.markdownInput += loremIpsum;
-        // tells whatever views are listening that the data has changed
+        this.document.text += loremIpsum;
+
         this.emit('change');
     },
 
-    updatePreview: function(currentInput) {
-        // tells whatever views are listening that the data has changed
-        this.markdownInput = currentInput;
+    onUpdatePreview: function(payload) {
+        this.document.text = payload;
+
         this.emit('change');
     },
 
     getState: function() {
         return {
-            markdownInput: this.markdownInput
+            document: this.document
         };
     }
 });
 
-// Markdown Editor component
-var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
-    render: function() {
-        return (
-            React.createElement("div", null, 
-                React.createElement(MarkdownInput, {
-                    flux:  flux, 
-                    textareaRows: "10", 
-                    textAreaCols: "50"}
-                ), 
-                React.createElement(MarkdownPreview, {
-                    flux:  flux }
-                )
-            )
-        )
-    }
-});
+// Markdown editor Subcomponent
+var MarkdownEditor = React.createClass({
+    displayName : 'MarkdownEditor',
 
-// Markdown input component
-var MarkdownInput = React.createClass({displayName: "MarkdownInput",
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('MarkdownInputStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     handleLoremIpsumClick: function() {
         var flux = this.getFlux();
-        flux.actions.generateLoremIpsum(this.state.markdownInput);
+        flux.actions.generateLoremIpsum();
     },
 
+    // we need an onChange handler since React textarea elements
+    // with value attributes are considered "controlled", and as such
+    // the textarea would not be editable by users. this makes the
+    // text area editable for users
     handleOnChange: function(event) {
+        var state = _.extend(this.state.document, {text: event.target.value});
+        this.setState(
+            {
+                document: state
+            }
+        );
+    },
+
+    handleOnKeyUp: function() {
         var flux = this.getFlux();
-        flux.actions.updatePreview(event.target.value);
+        flux.actions.updatePreview(this.state.document.text);
     },
 
     render: function() {
         return (
-            React.createElement("div", {id: "md-editor"}, 
+            React.createElement("div", null, 
+                React.createElement("h2", null, "Editor"), 
                 React.createElement("textarea", {
                     rows:  this.props.textareaRows, 
                     cols:  this.props.textAreaCols, 
-                    ref: "markdownTextarea", 
-                    value:  this.state.markdownInput, 
-                    onChange:  this.handleOnChange}
+                    value: this.state.document.text, 
+                    onChange: this.handleOnChange, 
+                    onKeyUp: this.handleOnKeyUp}
                 ), 
                 React.createElement("br", null), 
-                React.createElement("button", {onClick:  this.handleLoremIpsumClick}, "Get Lorem Ipsum!")
+                React.createElement("button", {
+                    onClick: this.handleLoremIpsumClick
+                }, "Get Lorem Ipsum!")
             )
         );
     }
 });
 
-// Markdown preview component
-var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
+// Markdown preview Subcomponent
+var MarkdownPreview = React.createClass({
+    displayName : 'MarkdownPreview',
+
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
+
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('MarkdownInputStore').getState();
+        return flux.store('DocumentStore').getState();
     },
+
+    render: function() {
+        var div;
+        if (this.state.document.text) {
+            div = (React.createElement("div", {
+                id: "mdPreview", 
+                dangerouslySetInnerHTML: {__html: marked(this.state.document.text, {sanitize: true})}}
+            ));
+        } else {
+            div = (React.createElement("div", {
+                id: "mdPreview"}
+            ));
+        }
+
+        return (
+            React.createElement("div", null, 
+                React.createElement("h2", null, "Preview"), 
+            div
+            )
+        )
+    }
+});
+
+// Markdown Viewer Component
+var MarkdownViewer = React.createClass({
+    displayName : 'MarkdownViewer',
+
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentStore').getState();
+    },
+
     render: function() {
         return (
-            React.createElement("div", {
-                id: "md-preview", 
-                dangerouslySetInnerHTML:  { __html: marked(this.state.markdownInput, {sanitize: true})} }
+            React.createElement("div", null, 
+                React.createElement(MarkdownEditor, {
+                    flux: flux, 
+                    textareaRows: "10", 
+                    textAreaCols: "50"}
+                ), 
+                React.createElement(MarkdownPreview, {
+                    flux: flux}
+                )
             )
         )
     }
@@ -148,7 +200,7 @@ var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
 
 // Fluxxor application initialization and main rendering
 var stores = {
-    MarkdownInputStore: new MarkdownInputStore()
+    DocumentStore: new DocumentStore()
 };
 
 // register actions and stores with fluxxor application
@@ -156,6 +208,8 @@ var stores = {
 var flux = new Fluxxor.Flux(stores, actions);
 
 React.render(
-    React.createElement(MarkdownEditor, null),
+    React.createElement(MarkdownViewer, {
+        flux: flux}
+    ),
     document.getElementById('container')
 );

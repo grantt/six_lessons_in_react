@@ -344,7 +344,6 @@ var MarkdownEditor = React.createClass({
                 header, 
                 React.createElement("textarea", {
                     style: this.styles.textarea, 
-                    ref: "markdownTextarea", 
                     value: this.state.document.text, 
                     onChange: this.handleOnChange, 
                     onKeyUp: this.handleOnKeyUp}

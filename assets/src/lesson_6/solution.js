@@ -493,7 +493,6 @@ var MarkdownEditor = React.createClass({
                 {header}
                 <textarea
                     style={this.styles.textarea}
-                    ref="markdownTextarea"
                     data={this.state.activeDocument.id}
                     value={this.state.activeDocument.text}
                     onChange={this.handleOnChange}

@@ -84,10 +84,6 @@ var MarkdownEditor = React.createClass({
         Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
-    getInitialState: function() {
-        return {buttonHover: false}
-    },
-
     getStateFromFlux: function() {
         var flux = this.getFlux();
         return flux.store('DocumentStore').getState();
@@ -116,23 +112,11 @@ var MarkdownEditor = React.createClass({
         flux.actions.updatePreview(this.state.document.text);
     },
 
-    handleTitleEditorKeyDown: function(event) {
-        if (event.keyCode == 13 ) {
-            return this.saveDocumentTitle(event);
-        }
-    },
-
-    saveDocumentTitle: function(event) {
-        var flux = this.getFlux();
-        flux.actions.saveDocumentTitle(event.target.value);
-    },
-
     render: function() {
         return (
             <div>
                 <h2>Editor</h2>
                 <textarea
-                    ref="markdownTextarea"
                     rows={ this.props.textareaRows }
                     cols={ this.props.textAreaCols }
                     value={this.state.document.text}
