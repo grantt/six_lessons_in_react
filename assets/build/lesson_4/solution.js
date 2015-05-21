@@ -3,19 +3,17 @@ var FluxMixin = Fluxxor.FluxMixin(React);
 
 // Action constants
 var constants = {
-    CLEAR_INPUT: 'CLEAR_INPUT',
     GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
     GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
     GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
-    UPDATE_PREVIEW: 'UPDATE_PREVIEW',
-    TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR'
+    UPDATE_PREVIEW: 'UPDATE_PREVIEW'
 };
 
 var actions = {
-    generateLoremIpsum: function() {
+    generateLoremIpsum: function(currentMarkdownEditor) {
         // we should still dispatch the original action, in case any stores
         // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM);
+        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownEditor);
 
         var that = this;
         $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
@@ -26,35 +24,51 @@ var actions = {
             }
         });
     },
-
-    updatePreview: function(currentMarkdownInput) {
-        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
-    },
-
-    clearInput: function() {
-        this.dispatch(constants.CLEAR_INPUT);
-    },
-
-    toggleSidebar: function() {
-        this.dispatch(constants.TOGGLE_SIDEBAR);
+    updatePreview: function(currentMarkdownEditor) {
+        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownEditor);
     }
 };
 
-var MarkdownInputStore = Fluxxor.createStore({
-    initialize: function() {
-        this.markdownInput = '';
+// Base CSS styles
+var styles = {
+    button: {
+        border: 0,
+        WebkitBorderRadius: 3,
+        MozBorderRadius: 3,
+        borderRadius: 3,
+        color: '#ffffff',
+        fontSize: 12,
+        background: '#3299bb',
+        padding: '10px 20px 10px 20px',
+        textDecoration: null
+    },
+    buttonHover: {
+        background: '#26768E',
+        padding: '10px 20px 10px 20px',
+        textDecoration: null
+    }
+};
 
-        // reigsters the following callbacks with the dispatcher
+// Stores
+var DocumentStore = Fluxxor.createStore({
+    mixins: [
+        FluxMixin
+    ],
+
+    initialize: function() {
+        this.document = {
+            'text': ''
+        };
+
         this.bindActions(
-            constants.CLEAR_INPUT, this.clearInput,
             constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
             constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
             constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
-            constants.UPDATE_PREVIEW, this.updatePreview
+            constants.UPDATE_PREVIEW, this.onUpdatePreview
         );
     },
 
-    generateLoremIpsum:function(currentInput) {
+    generateLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
@@ -63,223 +77,226 @@ var MarkdownInputStore = Fluxxor.createStore({
     },
 
     generateLoremIpsumSuccess: function(loremIpsum) {
-        this.markdownInput += loremIpsum;
-        // tells whatever views are listening that the data has changed
+        this.document.text += loremIpsum;
+
         this.emit('change');
     },
 
-    updatePreview: function(currentInput) {
-        // tells whatever views are listening that the data has changed
-        this.markdownInput = currentInput;
-        this.emit('change');
-    },
+    onUpdatePreview: function(payload) {
+        this.document.text = payload;
 
-    clearInput: function() {
-        this.markdownInput = '';
         this.emit('change');
     },
 
     getState: function() {
         return {
-            markdownInput: this.markdownInput
+            document: this.document
         };
     }
 });
 
-var NavigationStore = Fluxxor.createStore({
-    initialize: function() {
-        this.sidebarOpen = false;
+// Markdown editor Subcomponent
+var MarkdownEditor = React.createClass({
+    displayName : 'MarkdownEditor',
 
-        this.bindActions(
-            constants.TOGGLE_SIDEBAR, this.toggleSidebar
-        );
-    },
-
-    toggleSidebar: function() {
-        this.sidebarOpen = !this.sidebarOpen;
-        console.log(this.sidebarOpen);
-        this.emit('change');
-    },
-
-    getState: function() {
-        return {
-            sidebarOpen: this.sidebarOpen
-        };
-    }
-});
-
-// Markdown Editor component
-var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
-    render: function() {
-        return (
-            React.createElement("div", null, 
-                React.createElement(MarkdownInput, {
-                    flux:  flux, 
-                    textareaRows: "10", 
-                    textAreaCols: "50"}
-                ), 
-                React.createElement(MarkdownPreview, {
-                    flux:  flux }
-                )
-            )
-        )
-    }
-});
-
-// Markdown input component
-var MarkdownInput = React.createClass({displayName: "MarkdownInput",
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
+
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '43.0%',
+            marginLeft: '1.0%'
+        },
+        textarea: {
+            fontFamily: 'Courier, monospace',
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            width: '100%',
+            minHeight: '500px',
+            border: 0,
+            resize: 'vertical'
+
+        },
+        titleEdit: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            width: '100%',
+            color: '#424242',
+            fontFamily: '"Exo", "Helvetica Neue", Helvetica, Arial, sans-serif',
+            fontSize: '2em',
+            fontWeight: 'bold',
+            padding: 'none',
+            border: 'none',
+            margin: '-1px 0 16px -1px',
+            lineHeight: '1.7',
+            background: 'none'
+        }
+    },
+
+    getInitialState: function() {
+        return {buttonHover: false}
+    },
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('MarkdownInputStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     handleLoremIpsumClick: function() {
         var flux = this.getFlux();
-        flux.actions.generateLoremIpsum(this.state.markdownInput);
+        flux.actions.generateLoremIpsum();
     },
 
+    // we need an onChange handler since React textarea elements
+    // with value attributes are considered "controlled", and as such
+    // the textarea would not be editable by users. this makes the
+    // text area editable for users
     handleOnChange: function(event) {
+        var state = _.extend(this.state.document, {text: event.target.value});
+        this.setState(
+            {
+                document: state
+            }
+        );
+    },
+
+    handleOnKeyUp: function() {
         var flux = this.getFlux();
-        flux.actions.updatePreview(event.target.value);
+        flux.actions.updatePreview(this.state.document.text);
+    },
+
+    setHoverTrue: function() {
+        this.setState({
+            buttonHover: true
+        });
+    },
+
+    setHoverFalse: function() {
+        this.setState({
+            buttonHover: false
+        });
     },
 
     render: function() {
         return (
-            React.createElement("div", {id: "md-editor"}, 
+            React.createElement("div", {style: this.styles.container}, 
+                React.createElement("h2", null, "Editor"), 
                 React.createElement("textarea", {
-                    rows:  this.props.textareaRows, 
-                    cols:  this.props.textAreaCols, 
+                    style: this.styles.textarea, 
                     ref: "markdownTextarea", 
-                    value:  this.state.markdownInput, 
-                    onChange:  this.handleOnChange}
+                    value: this.state.document.text, 
+                    onChange: this.handleOnChange, 
+                    onKeyUp: this.handleOnKeyUp}
                 ), 
                 React.createElement("br", null), 
-                React.createElement("button", {onClick:  this.handleLoremIpsumClick}, "Get Lorem Ipsum!")
+                React.createElement("button", {
+                    style: this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button, 
+                    onMouseOver: this.setHoverTrue, onMouseOut: this.setHoverFalse, 
+                    onClick: this.handleLoremIpsumClick
+                }, "Get Lorem Ipsum!")
             )
         );
     }
 });
 
-// Markdown preview component
-var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
+// Markdown preview Subcomponent
+var MarkdownPreview = React.createClass({
+    displayName : 'MarkdownPreview',
+
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
+
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '43.0%',
+            marginLeft: '1.0%'
+        },
+        mdPreview: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            background: '#f0f0f0',
+            padding: '5px 15px',
+            minHeight: '500px'
+        }
+    },
+
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('MarkdownInputStore').getState();
+        return flux.store('DocumentStore').getState();
     },
+
     render: function() {
+        var div;
+        if (this.state.document.text) {
+            div = (React.createElement("div", {
+                id: "mdPreview", 
+                style: this.styles.mdPreview, 
+                dangerouslySetInnerHTML: {__html: marked(this.state.document.text, {sanitize: true})}}
+            ));
+        } else {
+            div = (React.createElement("div", {
+                id: "mdPreview", 
+                style: this.styles.mdPreview}
+            ));
+        }
+
         return (
-            React.createElement("div", {
-                id: "md-preview", 
-                dangerouslySetInnerHTML:  { __html: marked(this.state.markdownInput, {sanitize: true})} }
+            React.createElement("div", {style: this.styles.container}, 
+                React.createElement("h2", null, "Preview"), 
+            div
             )
         )
     }
 });
 
+// Markdown Viewer Component
+var MarkdownViewer = React.createClass({
+    displayName : 'MarkdownViewer',
 
-// Subcomponents
-var TopNav = React.createClass({displayName: "TopNav",
-    mixins: [
-        FluxMixin
-    ],
-
-    handleSidebarToggle: function() {
-        var flux = this.getFlux();
-        flux.actions.toggleSidebar();
-    },
-
-    render: function() {
-        var classes = 'fa fa-lg ';
-        classes += this.props.sidebarOpen ? 'fa-times' : 'fa-bars';
-
-        return(
-            React.createElement("ul", null, 
-                React.createElement("li", {onClick:  this.handleSidebarToggle}, React.createElement("i", {className:  classes })), 
-                React.createElement("li", null, "My Awesome Markdown preview generator")
-            )
-        );
-    }
-});
-
-var Sidebar = React.createClass({displayName: "Sidebar",
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('MarkdownInputStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('MarkdownInputStore').getState();
-    },
-
-    handleClear: function() {
-        var flux = this.getFlux();
-        flux.actions.clearInput();
-    },
-
-    setZeroClipboardText: function() {
-        if (this.state.clipboardClient) {
-            this.state.clipboardClient.setText(this.state.markdownInput);
-        }
-    },
-
-    componentDidMount: function() {
-        var client = new ZeroClipboard(document.getElementsByClassName('clipboard-li'));
-        this.setState({ clipboardClient: client });
-        this.setZeroClipboardText();
-    },
-
-    render: function() {
-        this.setZeroClipboardText();
-
-        if (this.props.sidebarOpen) {
-            return (
-                React.createElement("ul", {className: "fa-ul"}, 
-                    React.createElement("li", {onClick:  this.handleClear}, React.createElement("i", {className: "fa-li fa fa-eraser"}), "Clear"), 
-                    React.createElement("li", {className: "clipboard-li"}, React.createElement("i", {className: "fa-li fa fa-clipboard"}), "Copy Content")
-                )
-            );
-        } else {
-            return React.createElement("ul", null);
-        }
-    }
-});
-
-// Controller View
-var Navigation = React.createClass({displayName: "Navigation",
-    mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('NavigationStore')
-    ],
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('NavigationStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     render: function() {
         return (
             React.createElement("div", null, 
-                React.createElement(Sidebar, {sidebarOpen:  this.state.sidebarOpen}), 
-                React.createElement(TopNav, {sidebarOpen:  this.state.sidebarOpen})
-            ) 
+                React.createElement(MarkdownEditor, {
+                    flux: flux, 
+                    textareaRows: "10", 
+                    textAreaCols: "50"}
+                ), 
+                React.createElement(MarkdownPreview, {
+                    flux: flux}
+                )
+            )
         )
     }
 });
 
 // Fluxxor application initialization and main rendering
 var stores = {
-    MarkdownInputStore: new MarkdownInputStore(),
-    NavigationStore: new NavigationStore()
+    DocumentStore: new DocumentStore()
 };
 
 // register actions and stores with fluxxor application
@@ -287,11 +304,8 @@ var stores = {
 var flux = new Fluxxor.Flux(stores, actions);
 
 React.render(
-    React.createElement(MarkdownEditor, null),
-    document.getElementById('markdown-container')
-);
-
-React.render(
-    React.createElement(Navigation, {flux:  flux }),
-    document.getElementById('nav-container')
+    React.createElement(MarkdownViewer, {
+        flux: flux}
+    ),
+    document.getElementById('container')
 );

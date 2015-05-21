@@ -8,13 +8,10 @@ var constants = {
     GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
     GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
     UPDATE_PREVIEW: 'UPDATE_PREVIEW',
-    TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR',
     CREATE_DOCUMENT: 'CREATE_DOCUMENT',
     DELETE_DOCUMENT: 'DELETE_DOCUMENT',
     EDIT_DOCUMENT_TITLE: 'EDIT_DOCUMENT_TITLE',
-    SAVE_DOCUMENT_TITLE: 'SAVE_DOCUMENT_TITLE',
-    SELECT_DOCUMENT: 'SELECT_DOCUMENT',
-    UPDATE_ACTIVE_DOCUMENT: 'UPDATE_ACTIVE_DOCUMENT'
+    SAVE_DOCUMENT_TITLE: 'SAVE_DOCUMENT_TITLE'
 };
 
 var actions = {
@@ -40,20 +37,12 @@ var actions = {
         this.dispatch(constants.CLEAR_INPUT);
     },
 
-    toggleSidebar: function() {
-        this.dispatch(constants.TOGGLE_SIDEBAR);
-    },
-
     editDocumentTitle: function(title) {
         this.dispatch(constants.EDIT_DOCUMENT_TITLE, title);
     },
 
     saveDocumentTitle: function(title) {
         this.dispatch(constants.SAVE_DOCUMENT_TITLE, title);
-    },
-
-    updatedocument: function(doc) {
-        this.dispatch(constants.UPDATE_ACTIVE_DOCUMENT, doc);
     }
 };
 
@@ -307,7 +296,7 @@ var MarkdownEditor = React.createClass({
         );
     },
 
-    handleOnKeyUp: function(event) {
+    handleOnKeyUp: function() {
         var flux = this.getFlux();
         flux.actions.updatePreview(this.state.document.text);
     },
@@ -323,11 +312,13 @@ var MarkdownEditor = React.createClass({
             buttonHover: false
         });
     },
+
     handleTitleEditorKeyDown: function(event) {
         if (event.keyCode == 13 ) {
             return this.saveDocumentTitle(event);
         }
     },
+
     saveDocumentTitle: function(event) {
         var flux = this.getFlux();
         flux.actions.saveDocumentTitle(event.target.value);

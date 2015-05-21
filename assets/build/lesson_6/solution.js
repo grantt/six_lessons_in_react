@@ -3,12 +3,11 @@ var FluxMixin = Fluxxor.FluxMixin(React);
 
 // Action constants
 var constants = {
-    CLEAR_INPUT: 'CLEAR_INPUT',
     GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
     GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
     GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
     UPDATE_PREVIEW: 'UPDATE_PREVIEW',
-    TOGGLE_SIDEBAR: 'TOGGLE_SIDEBAR',
+    CLEAR_INPUT: 'CLEAR_INPUT',
     CREATE_DOCUMENT: 'CREATE_DOCUMENT',
     DELETE_DOCUMENT: 'DELETE_DOCUMENT',
     EDIT_DOCUMENT_TITLE: 'EDIT_DOCUMENT_TITLE',
@@ -38,10 +37,6 @@ var actions = {
 
     clearInput: function() {
         this.dispatch(constants.CLEAR_INPUT);
-    },
-
-    toggleSidebar: function() {
-        this.dispatch(constants.TOGGLE_SIDEBAR);
     },
 
     createDocument: function() {
@@ -450,7 +445,7 @@ var MarkdownEditor = React.createClass({
         );
     },
 
-    handleOnKeyUp: function(event) {
+    handleOnKeyUp: function() {
         var flux = this.getFlux();
         flux.actions.updatePreview(this.state.activeDocument.text);
     },
@@ -466,11 +461,13 @@ var MarkdownEditor = React.createClass({
             buttonHover: false
         });
     },
+
     handleTitleEditorKeyDown: function(event) {
         if (event.keyCode == 13 ) {
             return this.saveDocumentTitle(event);
         }
     },
+
     saveDocumentTitle: function(event) {
         var flux = this.getFlux();
         flux.actions.saveDocumentTitle(event.target.value);
