@@ -65,11 +65,11 @@ var actions = {
   }
 };</code></pre>
 
-        <p>This action by itself doesn't do anything, so let's add a MarkdownInputStore that listens to the generate lorem ipsum action and console.log's whenever that action is dispatched.</p>
+        <p>This action by itself doesn't do anything, so let's add a DocumentStore that listens to the generate lorem ipsum action and console.log's whenever that action is dispatched.</p>
 
-        <pre><code>var MarkdownInputStore = Fluxxor.createStore({
+        <pre><code>var DocumentStore = Fluxxor.createStore({
   initialize: function() {
-    // reigsters the following callbacks with the dispatcher
+    // Registers the following callbacks with the dispatcher
     this.bindActions(
       constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum
     );
@@ -83,7 +83,7 @@ var actions = {
         <p>Now we need to make sure that our button click handler can trigger the "GENERATE_LOREM_IPSUM" action instead of console.logging directly. In order to do that we need to first instantiate our Fluxxor application and pass the Fluxxor object to our main component when we render it. We can do this by doing the following:</p>
 
         <pre><code>var stores = {
-  MarkdownInputStore: new MarkdownInputStore()
+  DocumentStore: new DocumentStore()
 };
 
 // register actions and stores with fluxxor application
@@ -91,7 +91,7 @@ var actions = {
 var flux = new Fluxxor.Flux(stores, actions);
 
 React.render(
-  &lt;MarkdownInput flux={ flux }/&gt;,
+  &lt;MarkdownInput flux={flux}/&gt;,
   document.getElementById('container')
 );</code></pre>
 
@@ -147,7 +147,7 @@ React.render(
 
         <p>Now that we're dispatching the success and error actions, let's alter the store to listen to those actions.</p>
 
-        <pre><code>var MarkdownInputStore = Fluxxor.createStore({
+        <pre><code>var DocumentStore = Fluxxor.createStore({
   initialize: function() {
     // reigsters the following callbacks with the dispatcher
     this.bindActions(
@@ -178,9 +178,9 @@ React.render(
   this.emit('change');
 }</code></pre>
 
-        <p>Now to make sure it all works together, let's make sure that the Markdown input component can get state information from the MarkdownInputStore.</p>
+        <p>Now to make sure it all works together, let's make sure that the Markdown input component can get state information from the DocumentStore.</p>
 
-        <p>First we need to add a getState helper to the MarkdownInputStore.</p>
+        <p>First we need to add a getState helper to the DocumentStore.</p>
 
         <pre><code>getState: function() {
   return {
@@ -192,14 +192,14 @@ React.render(
         <pre><code>var MarkdownInput = React.createClass({
   mixins: [
     FluxMixin,
-    Fluxxor.StoreWatchMixin('MarkdownInputStore')
+    Fluxxor.StoreWatchMixin('DocumentStore')
   ],
 
   // this is automatically invoked by getInitialState
   // since we have a Fluxxor instance
   getStateFromFlux: function() {
     var flux = this.getFlux();
-    return flux.store('MarkdownInputStore').getState();
+    return flux.store('DocumentStore').getState();
   },
 
   handleLoremIpsumClick: function() {
@@ -211,21 +211,21 @@ React.render(
   // the textarea would not be editable by users. this makes the
   // text area editable for users
   handleOnChange: function(event) {
-    this.setState({ markdownInput: event.target.value });
+    this.setState({markdownInput: event.target.value});
   },
 
   render: function() {
     return (
       &lt;div>
         &lt;textarea
-          rows={ this.props.textareaRows }
-          cols={ this.props.textAreaCols }
+          rows={this.props.textareaRows}
+          cols={this.props.textAreaCols}
           ref="markdownTextarea"
-          value={ this.state.markdownInput }
-          onChange={ this.handleOnChange }
+          value={this.state.markdownInput}
+          onChange={this.handleOnChange}
         /&gt;
         &lt;br /&gt;
-        &lt;button onClick={ this.handleLoremIpsumClick }>Get Lorem Ipsum!&lt;/button&gt;
+        &lt;button onClick={this.handleLoremIpsumClick}>Get Lorem Ipsum!&lt;/button&gt;
       &lt;/div&gt;
     );
   }
