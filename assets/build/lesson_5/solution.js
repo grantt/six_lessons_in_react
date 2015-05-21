@@ -244,7 +244,7 @@ var Sidebar = React.createClass({displayName: "Sidebar",
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("ul", {style: this.styles.ul}, 
                     React.createElement("li", {style: this.styles.li, onClick:  this.handleRename}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-pencil"}), "Rename Document"), 
-                    React.createElement("li", {style: this.styles.li, className: "clipboard-li"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy to Clipoard"), 
+                    React.createElement("li", {style: this.styles.li, className: "clipboard-li"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy Content"), 
                     React.createElement("li", {style: this.styles.li, onClick:  this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear"), 
                     deleteLi
                 )
@@ -358,23 +358,6 @@ var DocumentsStore = Fluxxor.createStore({
     }
 });
 
-// Controller View
-var Application = React.createClass({displayName: "Application",
-    mixins: [
-        FluxMixin
-    ],
-
-    render: function() {
-        return (
-            React.createElement("div", null, 
-                React.createElement(TopNav, null), 
-                React.createElement(Sidebar, null), 
-                React.createElement(MarkdownViewer, null)
-            )
-        )
-    }
-});
-
 // Markdown Viewer component
 var MarkdownViewer = React.createClass({displayName: "MarkdownViewer",
     mixins: [
@@ -460,9 +443,18 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
             textDecoration: null
         },
         titleEdit: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            width: '100%',
+            color: '#424242',
+            fontFamily: '"Exo", "Helvetica Neue", Helvetica, Arial, sans-serif',
             fontSize: '2em',
             fontWeight: 'bold',
-            border: '1px solid #666666',
+            padding: 'none',
+            border: 'none',
+            margin: '-1px 0 16px -1px',
+            lineHeight: '1.7',
             background: 'none'
         }
     },
@@ -510,7 +502,11 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
             buttonHover: false
         });
     },
-
+    handleTitleEditorKeyDown: function(event) {
+        if (event.keyCode == 13 ) {
+            return this.saveDocumentTitle(event);
+        }
+    },
     saveDocumentTitle: function(event) {
         var flux = this.getFlux();
         flux.actions.saveDocumentTitle(event.target.value);
@@ -519,7 +515,7 @@ var MarkdownEditor = React.createClass({displayName: "MarkdownEditor",
     render: function() {
         var header;
         if (this.state.activeEdit === true) {
-            header = React.createElement("input", {type: "text", placeholder: this.state.activeDocument.title, onBlur: this.saveDocumentTitle, ref: "titleInput", style: this.styles.titleEdit});
+            header = React.createElement("input", {type: "text", defaultValue: this.state.activeDocument.title, onBlur: this.saveDocumentTitle, onKeyDown: this.handleTitleEditorKeyDown, ref: "titleInput", style: this.styles.titleEdit, autoFocus: "true"});
         } else {
             header = React.createElement("h2", null, this.state.activeDocument.title, " Editor");
         }
@@ -596,6 +592,23 @@ var MarkdownPreview = React.createClass({displayName: "MarkdownPreview",
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("h2", null, this.state.activeDocument.title, " Preview"), 
             div
+            )
+        )
+    }
+});
+
+// Controller View
+var Application = React.createClass({displayName: "Application",
+    mixins: [
+        FluxMixin
+    ],
+
+    render: function() {
+        return (
+            React.createElement("div", null, 
+                React.createElement(TopNav, null), 
+                React.createElement(Sidebar, null), 
+                React.createElement(MarkdownViewer, null)
             )
         )
     }

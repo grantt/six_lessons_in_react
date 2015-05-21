@@ -245,7 +245,7 @@ var Sidebar = React.createClass({displayName: "Sidebar",
             return (
                 React.createElement("ul", {className: "fa-ul"}, 
                     React.createElement("li", {onClick:  this.handleClear}, React.createElement("i", {className: "fa-li fa fa-eraser"}), "Clear"), 
-                    React.createElement("li", {className: "clipboard-li"}, React.createElement("i", {className: "fa-li fa fa-clipboard"}), "Copy to Clipoard")
+                    React.createElement("li", {className: "clipboard-li"}, React.createElement("i", {className: "fa-li fa fa-clipboard"}), "Copy Content")
                 )
             );
         } else {

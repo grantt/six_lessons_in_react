@@ -243,8 +243,8 @@ var Sidebar = React.createClass({
         return (
             <div style={this.styles.container}>
                 <ul style={this.styles.ul}>
-                    <li style={this.styles.li}  onClick={ this.handleRename }><i style={this.styles.i} className="fa-lg fa fa-pencil"/>Rename Document</li>
-                    <li style={this.styles.li} className='clipboard-li'><i style={this.styles.i} className="fa-lg fa fa-clipboard"/>Copy to Clipoard</li>
+                    <li style={this.styles.li} onClick={ this.handleRename }><i style={this.styles.i} className="fa-lg fa fa-pencil"/>Rename Document</li>
+                    <li style={this.styles.li} className='clipboard-li'><i style={this.styles.i} className="fa-lg fa fa-clipboard"/>Copy Content</li>
                     <li style={this.styles.li} onClick={ this.handleClear }><i style={this.styles.i} className="fa-lg fa fa-eraser"/>Clear</li>
                     {deleteLi}
                 </ul>
@@ -358,23 +358,6 @@ var DocumentsStore = Fluxxor.createStore({
     }
 });
 
-// Controller View
-var Application = React.createClass({
-    mixins: [
-        FluxMixin
-    ],
-
-    render: function() {
-        return (
-            <div>
-                <TopNav/>
-                <Sidebar/>
-                <MarkdownViewer />
-            </div>
-        )
-    }
-});
-
 // Markdown Viewer component
 var MarkdownViewer = React.createClass({
     mixins: [
@@ -460,9 +443,18 @@ var MarkdownEditor = React.createClass({
             textDecoration: null
         },
         titleEdit: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            width: '100%',
+            color: '#424242',
+            fontFamily: '"Exo", "Helvetica Neue", Helvetica, Arial, sans-serif',
             fontSize: '2em',
             fontWeight: 'bold',
-            border: '1px solid #666666',
+            padding: 'none',
+            border: 'none',
+            margin: '-1px 0 16px -1px',
+            lineHeight: '1.7',
             background: 'none'
         }
     },
@@ -510,7 +502,11 @@ var MarkdownEditor = React.createClass({
             buttonHover: false
         });
     },
-
+    handleTitleEditorKeyDown: function(event) {
+        if (event.keyCode == 13 ) {
+            return this.saveDocumentTitle(event);
+        }
+    },
     saveDocumentTitle: function(event) {
         var flux = this.getFlux();
         flux.actions.saveDocumentTitle(event.target.value);
@@ -519,7 +515,7 @@ var MarkdownEditor = React.createClass({
     render: function() {
         var header;
         if (this.state.activeEdit === true) {
-            header = <input type='text' placeholder={this.state.activeDocument.title} onBlur={this.saveDocumentTitle} ref="titleInput" style={this.styles.titleEdit}/>;
+            header = <input type='text' defaultValue={this.state.activeDocument.title} onBlur={this.saveDocumentTitle} onKeyDown={this.handleTitleEditorKeyDown}ref="titleInput" style={this.styles.titleEdit} autoFocus='true'/>;
         } else {
             header = <h2>{this.state.activeDocument.title} Editor</h2>;
         }
@@ -596,6 +592,23 @@ var MarkdownPreview = React.createClass({
             <div style={this.styles.container}>
                 <h2>{this.state.activeDocument.title} Preview</h2>
             {div}
+            </div>
+        )
+    }
+});
+
+// Controller View
+var Application = React.createClass({
+    mixins: [
+        FluxMixin
+    ],
+
+    render: function() {
+        return (
+            <div>
+                <TopNav/>
+                <Sidebar/>
+                <MarkdownViewer />
             </div>
         )
     }
