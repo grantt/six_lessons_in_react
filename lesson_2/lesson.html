@@ -10,7 +10,7 @@
     <div id="container">
         <p>In the next few lessons we're going to build a live Markdown preview generator (kind of like <a href="http://dillinger.io">dillinger.io</a>). In order to do that we're going to need at least two React components - a Markdown input form + renderer - and a way to communicate Markdown input changes to the renderer. This where Flux comes in. Flux will manage user interactions and communicate the necessary data between React components.</p>
 
-        <h3>What is Flux?</h3>
+        <h2>What is Flux?</h2>
 
         <p>Flux is an application architecture that Facebook has developed to complement React. It is not a framework in and of itself, but rather a set of architectural concepts. There are already a few implementations of the Flux architecture that developers can use, all with their own interpretations of the Flux's principles.</p>
 
@@ -18,7 +18,7 @@
 
         <p>As we mentioned above, Flux is a set of architectural concepts and not a framework and already has several implmentations. (See <a href="https://reactjsnews.com/the-state-of-flux/">this article</a> for a comparison of available implementations.) For our tutorial we are going to use <a href="http://fluxxor.com/">Fluxxor</a> as our Flux implementation, since it preserves the main principles of Flux.</p>
 
-        <h1>Exercise</h1>
+        <h2>Exercise</h2>
 
         <p>Now that we know a little bit about Flux, let's put that knowledge to work. In this lesson we're going to start with our Markdown input component. This component will also have a "Generate Text" button that fetches some Lorem Ipsum from an API and adds that to the Markdown input. Add your code to assets/src/lesson_2/example.js as we walk through the steps.</p>
 
@@ -126,7 +126,7 @@ React.render(
   GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS'
 };</code></pre>
 
-        <p>Now we need to trigger an API call whenever the "GENERATE_LOREM_IPSUM" action is triggered. On the failure or sucess of that call, we can dispatch the respective action to the dispatcher. So the first argument to this.dispatch will be the action type, and the second will be the data (if any) we want to send to the stores that are listening.</p>
+        <p>Now we need to trigger an API call whenever the "GENERATE_LOREM_IPSUM" action is triggered. On the failure or success of that call, we can dispatch the respective action to the dispatcher. So the first argument to this.dispatch will be the action type, and the second will be the data (if any) we want to send to the stores that are listening.</p>
 
         <pre><code>var actions = {
   generateLoremIpsum: function() {
@@ -235,11 +235,11 @@ React.render(
 
         <p>But there's a small bug in our implementation: anything typed into the textarea is overwritten when a user clicks the "Generate Lorem Ipsum" button. Can you alter our implementation to add the lorem ipsum to what's already in the textarea?</p>
 
-        <h1>Further Reading</h1>
+        <h2>Further Reading</h2>
         <ul>
-          <li><a href="https://facebook.github.io/flux/docs/overview.html">The original Flux documentation.</a></li>
-          <li><a href="https://reactjsnews.com/the-state-of-flux/">Article comparing Flux implementations</a></li>
-          <li><a href="http://fluxxor.com/">Fluxxor documentation</a></li>
+          <li><a href="https://facebook.github.io/flux/docs/overview.html" target="_blank">The original Flux documentation</a></li>
+          <li><a href="https://reactjsnews.com/the-state-of-flux/" target="_blank">Article comparing Flux implementations</a></li>
+          <li><a href="http://fluxxor.com/" target="_blank">Fluxxor documentation</a></li>
         </ul>
     </div>
     <div id="footerNav">

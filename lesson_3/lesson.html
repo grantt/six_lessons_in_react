@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
-    <title>Lesson 3</title>
+    <title>Lesson 3 - Multiple and Advanced Components</title>
       <link rel="stylesheet" href="../assets/css/base.css" />
   </head>
   <body>
-    <h1>Lesson 3</h1>
+    <h1>Lesson 3 - Multiple and Advanced Components</h1>
     <div id="container">
         <p>Next we will extend our nascent Markdown preview generator to actually preview the text entered into our first component. This means that the textarea component will need to pass data to the display component.</p>
         <p>The preview component is relatively simple, it just needs to listen for any changes in the <code>MarkdownInputStore</code> and render the compiled markup as HTML. In order to properly listen to the store, we once again add <code>FluxMixin</code> and <code>Fluxxor.StoreWatchMixin</code> while adding a <code>getStateFromFlux</code> method. </p>
@@ -74,7 +74,7 @@ var MarkdownInputStore = Fluxxor.createStore({
     <h2>Further Reading</h2>
     <ul>
         <li><a href="https://github.com/chjj/marked" target="_blank">marked</a></li>
-        <li><a href=https://facebook.github.io/react/tips/dangerously-set-inner-html.html">dangerouslySetInnerHTML</a></li>
+        <li><a href="https://facebook.github.io/react/tips/dangerously-set-inner-html.html" target="_blank">dangerouslySetInnerHTML</a></li>
     </ul>
     </div>
     <div id="footerNav">

@@ -37,78 +37,44 @@ For these lessons, I am assuming the user has a novice or greater understanding 
   * Actions
 
 ### Exercises
-*  Set-up an environment
+Set-up an environment
 
-## Lesson 1
-### Building Components
-* 1.0 - Your First Component
-* 1.1 - Rendering a component
-* 1.2 - Components with properties
+## Lesson 1 - Basics
+Introduce basic React components by building a "Hello World" component that has a render method returning JSX. Next we introduce the concept of component properties, default properties, as well as how to render a component in the DOM. Finally, component state and event handlers are introduced.
+### Exercises
+Hello World Component
 
+## Lesson 2 - Flux and Data
+Flux architecture is introduced along with the idea of unidirectional data flow. The Fluxxor implementation of Flux is used for these examples. Actions and stores are introduced to demonstrate the proper construction of data flow. Next, we provide an example of an asynchronous call for data and how they are handled by actions within the Flux paradigm.
 
-*  Component Properties
-*  Component specification methods
-  *  render()
-  *  getInitialState()
-  *  getDefaultProps()
-  *  propTypes
-  *  mixins
-  *  statics
-  *  displayName
-*  Lifecycle Methods
-  *  Mounting
-    *  componentWillMount
-    *  componentDidMount
-  *  Updating
-    *  componentWillReceiveProps
-    *  shouldComponentUpdate
-    *  componentWillUpdate
-    *  componentDidUpdate
-    *  componentWillUnmount
-*  Data Model
-*  Component State
+### Exercises
+Lorem Ipsum Generator and Textarea
 
-## Lesson 2
-### Event Handling, Forms, and Validation
-*  State in components
-*  Autobinding
-*  Event Delegation
+## Lesson 3 - Multiple and Advanced Components
 
 ### Exercises
 
-## Lesson 3
-###Advanced and Reusable Components
-*  Modularity and Separation of Responsibilities
-*  Ownership
-*  Children
-*  Namespaced components
+## Lesson 4 - CSS in React
 
 ### Exercises
 
-## Lesson 4
-### CSS in React
-*  Failures of traditional CSS
-  *  Globals and Namespacing
-  *  Dependencies
-  *  Dead Code Elimination
-  *  Minification
-  *  Sharing Constants
-  *  Non-deterministic resolution
-  *  Isolation
-*  CSS in JS
-  *  CamelCase conversion
-  *  Automatically add 'px'
-  *  Replace commas with semicolons
-*  Inline styles
-  * 'style' vs 'class'
-*  Conditionals
-*  Limitations
+## Lesson 5 - Something
 
 ### Exercises
 
-## Lesson 5
-###Putting it all together
+## Lesson 6 - Something
 
 ### Exercises
 
 ## Sources
+[React documentation](https://facebook.github.io/react/index.html)
+
+[Flux documentation](https://facebook.github.io/flux/docs/overview.html)
+
+[Article comparing Flux implementations](https://reactjsnews.com/the-state-of-flux/)
+
+[Fluxxor documentation](http://fluxxor.com/)
+
+[Marked](https://github.com/chjj/marked)
+
+[dangerouslySetInnerHTML](https://facebook.github.io/react/tips/dangerously-set-inner-html.html)

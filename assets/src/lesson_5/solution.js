@@ -283,11 +283,6 @@ var DocumentTab = React.createClass({
         flux.actions.selectDocument(this.props.data);
     },
 
-    saveTitleEdit: function() {
-        var flux = this.getFlux();
-        flux.actions.generateLoremIpsum(val);
-    },
-
     render: function() {
         return (
             <li
