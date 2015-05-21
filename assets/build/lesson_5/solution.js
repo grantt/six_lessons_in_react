@@ -44,18 +44,6 @@ var actions = {
         this.dispatch(constants.TOGGLE_SIDEBAR);
     },
 
-    createDocument: function() {
-        this.dispatch(constants.CREATE_DOCUMENT);
-    },
-
-    deleteDocument: function() {
-        this.dispatch(constants.DELETE_DOCUMENT);
-    },
-
-    selectDocument: function(selectedDoc) {
-        this.dispatch(constants.SELECT_DOCUMENT, selectedDoc);
-    },
-
     editDocumentTitle: function(title) {
         this.dispatch(constants.EDIT_DOCUMENT_TITLE, title);
     },
@@ -64,7 +52,7 @@ var actions = {
         this.dispatch(constants.SAVE_DOCUMENT_TITLE, title);
     },
 
-    updateActiveDocument: function(doc) {
+    updatedocument: function(doc) {
         this.dispatch(constants.UPDATE_ACTIVE_DOCUMENT, doc);
     }
 };
@@ -97,64 +85,27 @@ var styles = {
 };
 
 // Stores
-var DocumentsStore = Fluxxor.createStore({
+var DocumentStore = Fluxxor.createStore({
     mixins: [
         FluxMixin
     ],
 
     initialize: function() {
-        this.documents = [];
-        this.activeDocument = null;
+        this.document = {
+            'text': '',
+            'title': 'Untitled'
+        };
         this.isEditActive = false;
 
         this.bindActions(
-            constants.CREATE_DOCUMENT, this.onCreateDocument,
-            constants.DELETE_DOCUMENT, this.onDeleteDocument,
             constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
             constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
             constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
             constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
             constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
             constants.CLEAR_INPUT, this.onClearInput,
-            constants.UPDATE_PREVIEW, this.onUpdatePreview,
-            constants.SELECT_DOCUMENT, this.onSelectDocument
+            constants.UPDATE_PREVIEW, this.onUpdatePreview
         );
-
-        this.onCreateDocument();
-    },
-
-    onCreateDocument: function() {
-        _.each(this.documents, function(document){
-            document.selected = false;
-        });
-        var id = _.uniqueId();
-        var newDoc = {id: id, title: 'Untitled_'+id, text: ''};
-        this.documents.push(newDoc);
-
-        this.activeDocument = newDoc;
-
-        this.emit('change');
-    },
-
-    onDeleteDocument: function() {
-        var that = this;
-        this.documents = this.documents.filter(function(document) {
-            return document.id != that.activeDocument.id
-        });
-
-        this.activeDocument = _.last(this.documents);
-
-        this.emit('change');
-    },
-
-    onSelectDocument: function(payload) {
-        _.each(this.documents, function(document){
-            document.selected = false;
-        });
-
-        this.activeDocument = _.findWhere(this.documents, {id: payload.id});
-
-        this.emit('change');
     },
 
     onEditDocumentTitle: function() {
@@ -165,7 +116,7 @@ var DocumentsStore = Fluxxor.createStore({
 
     onSaveDocumentTitle: function(title) {
         this.isEditActive = false;
-        this.activeDocument.title = title;
+        this.document.title = title;
 
         this.emit('change');
     },
@@ -179,117 +130,28 @@ var DocumentsStore = Fluxxor.createStore({
     },
 
     generateLoremIpsumSuccess: function(loremIpsum) {
-        this.activeDocument.text += loremIpsum;
+        this.document.text += loremIpsum;
 
         this.emit('change');
     },
 
     onUpdatePreview: function(payload) {
-        this.activeDocument.text = payload;
+        this.document.text = payload;
 
         this.emit('change');
     },
 
     onClearInput: function() {
-        this.activeDocument.text = '';
+        this.document.text = '';
 
         this.emit('change');
     },
 
     getState: function() {
         return {
-            documents: this.documents,
-            activeDocument: this.activeDocument,
+            document: this.document,
             isEditActive: this.isEditActive
         };
-    }
-});
-
-// Subcomponents
-var TabBar = React.createClass({
-    displayName : 'TabBar',
-
-    mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
-    ],
-
-    styles : {
-        container: {
-            width: '100%',
-            backgroundColor: '#424242',
-            color: '#e9e9e9'
-        },
-        ul: {
-            padding: '0px 0px',
-            margin: '0% 0% 0% 12%',
-            listStyle: 'none'
-        },
-        li: {
-            padding: '5px',
-            display: 'inline-block',
-            listStyleType: 'none',
-            marginRight: '15px',
-            cursor: 'pointer'
-        }
-    },
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
-    },
-
-    handleNewDocument: function() {
-        var flux = this.getFlux();
-        flux.actions.createDocument();
-    },
-
-    render: function() {
-        var that = this;
-        var classes = 'fa fa-lg fa-plus';
-
-        return (
-            React.createElement("div", {style: this.styles.container}, 
-                React.createElement("ul", {style: this.styles.ul}, 
-                    this.state.documents.map(function(doc) {
-                        if (doc.id === that.state.activeDocument.id) {
-                            doc = _.extend(doc, {selected: true})
-                        }
-                        return React.createElement(DocumentTab, {data: doc, key: doc.id});
-                    }), 
-                    React.createElement("li", {style: styles.li, onClick: this.handleNewDocument}, React.createElement("i", {className: classes}))
-                )
-            )
-        );
-    }
-});
-
-var DocumentTab = React.createClass({
-    displayName : 'DocumentTab',
-
-    mixins: [
-        FluxMixin
-    ],
-
-    styles : {
-        selectedLi: _.extend({}, styles.li, {
-            background: '#666666',
-            color: '#f0f0f0'
-        })
-    },
-
-    handleSelect: function() {
-        var flux = this.getFlux();
-        flux.actions.selectDocument(this.props.data);
-    },
-
-    render: function() {
-        return (
-            React.createElement("li", {
-                style: this.props.data.selected ? this.styles.selectedLi : styles.li, 
-                onClick: this.handleSelect
-            }, this.props.data.title)
-        );
     }
 });
 
@@ -298,7 +160,7 @@ var Sidebar = React.createClass({
 
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     styles: {
@@ -328,7 +190,7 @@ var Sidebar = React.createClass({
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     handleClear: function() {
@@ -360,17 +222,12 @@ var Sidebar = React.createClass({
 
     render: function() {
         this.setZeroClipboardText();
-        var deleteLi;
-        if (this.state.documents.length > 0) {
-            deleteLi = React.createElement("li", {style: this.styles.li, onClick: this.handleDelete}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-trash-o"}), "Delete");
-        }
         return (
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("ul", {style: this.styles.ul}, 
                     React.createElement("li", {style: this.styles.li, onClick: this.handleRename}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-pencil"}), "Rename Document"), 
                     React.createElement("li", {style: this.styles.li, id: "clipboard"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy Content"), 
-                    React.createElement("li", {style: this.styles.li, onClick: this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear"), 
-                    deleteLi
+                    React.createElement("li", {style: this.styles.li, onClick: this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear")
                 )
             )
         );
@@ -383,7 +240,7 @@ var MarkdownEditor = React.createClass({
 
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     styles: {
@@ -429,7 +286,7 @@ var MarkdownEditor = React.createClass({
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     handleLoremIpsumClick: function() {
@@ -442,17 +299,17 @@ var MarkdownEditor = React.createClass({
     // the textarea would not be editable by users. this makes the
     // text area editable for users
     handleOnChange: function(event) {
-        var state = _.extend(this.state.activeDocument, {text: event.target.value});
+        var state = _.extend(this.state.document, {text: event.target.value});
         this.setState(
             {
-                activeDocument: state
+                document: state
             }
         );
     },
 
     handleOnKeyUp: function(event) {
         var flux = this.getFlux();
-        flux.actions.updatePreview(this.state.activeDocument.text);
+        flux.actions.updatePreview(this.state.document.text);
     },
 
     setHoverTrue: function() {
@@ -481,14 +338,14 @@ var MarkdownEditor = React.createClass({
         if (this.state.isEditActive === true) {
             header = (React.createElement("input", {
                 type: "text", 
-                defaultValue: this.state.activeDocument.title, 
+                defaultValue: this.state.document.title, 
                 onBlur: this.saveDocumentTitle, 
                 onKeyDown: this.handleTitleEditorKeyDown, 
                 style: this.styles.titleEdit, 
                 autoFocus: "true"}
             ));
         } else {
-            header = React.createElement("h2", null, this.state.activeDocument.title, " Editor");
+            header = React.createElement("h2", null, this.state.document.title, " Editor");
         }
 
         return (
@@ -497,8 +354,7 @@ var MarkdownEditor = React.createClass({
                 React.createElement("textarea", {
                     style: this.styles.textarea, 
                     ref: "markdownTextarea", 
-                    data: this.state.activeDocument.id, 
-                    value: this.state.activeDocument.text, 
+                    value: this.state.document.text, 
                     onChange: this.handleOnChange, 
                     onKeyUp: this.handleOnKeyUp}
                 ), 
@@ -519,7 +375,7 @@ var MarkdownPreview = React.createClass({
 
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     styles: {
@@ -543,16 +399,16 @@ var MarkdownPreview = React.createClass({
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     render: function() {
         var div;
-        if (this.state.activeDocument.text) {
+        if (this.state.document.text) {
             div = (React.createElement("div", {
                 id: "mdPreview", 
                 style: this.styles.mdPreview, 
-                dangerouslySetInnerHTML: {__html: marked(this.state.activeDocument.text, {sanitize: true})}}
+                dangerouslySetInnerHTML: {__html: marked(this.state.document.text, {sanitize: true})}}
             ));
         } else {
             div = (React.createElement("div", {
@@ -563,7 +419,7 @@ var MarkdownPreview = React.createClass({
 
         return (
             React.createElement("div", {style: this.styles.container}, 
-                React.createElement("h2", null, this.state.activeDocument.title, " Preview"), 
+                React.createElement("h2", null, this.state.document.title, " Preview"), 
             div
             )
         )
@@ -576,34 +432,27 @@ var MarkdownViewer = React.createClass({
 
     mixins: [
         FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
 
     getStateFromFlux: function() {
         var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
+        return flux.store('DocumentStore').getState();
     },
 
     render: function() {
-        if (this.state.documents.length > 0) {
-            return (
-                React.createElement("div", null, 
-                    React.createElement(MarkdownEditor, {
-                        flux: flux, 
-                        textareaRows: "10", 
-                        textAreaCols: "50"}
-                    ), 
-                    React.createElement(MarkdownPreview, {
-                        flux: flux}
-                    )
+        return (
+            React.createElement("div", null, 
+                React.createElement(MarkdownEditor, {
+                    flux: flux, 
+                    textareaRows: "10", 
+                    textAreaCols: "50"}
+                ), 
+                React.createElement(MarkdownPreview, {
+                    flux: flux}
                 )
             )
-        } else {
-            return (
-                React.createElement("div", null)
-            )
-        }
-
+        )
     }
 });
 
@@ -619,7 +468,6 @@ var Application = React.createClass({
     render: function() {
         return (
             React.createElement("div", null, 
-                React.createElement(TabBar, null), 
                 React.createElement(Sidebar, null), 
                 React.createElement(MarkdownViewer, null)
             )
@@ -629,7 +477,7 @@ var Application = React.createClass({
 
 // Fluxxor application initialization and main rendering
 var stores = {
-    DocumentsStore: new DocumentsStore()
+    DocumentStore: new DocumentStore()
 };
 
 // register actions and stores with fluxxor application

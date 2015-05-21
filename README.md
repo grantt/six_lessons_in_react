@@ -53,18 +53,22 @@ Lorem Ipsum Generator and Textarea
 ## Lesson 3 - Multiple and Advanced Components
 
 ### Exercises
+Markdown Input and Preview
 
 ## Lesson 4 - CSS in React
 
 ### Exercises
+Styled Markdown Editor
 
-## Lesson 5 - Something
-
-### Exercises
-
-## Lesson 6 - Something
+## Lesson 5 - Advanced Actions
 
 ### Exercises
+Markdown Editor with Sidebar
+
+## Lesson 6 - Advanced Stores and Interaction
+
+### Exercises
+Multi-document Markdown Editor
 
 ## Sources
 [React documentation](https://facebook.github.io/react/index.html)
