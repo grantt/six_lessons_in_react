@@ -43,9 +43,7 @@ var styles = {
         textDecoration: null
     },
     buttonHover: {
-        background: '#26768E',
-        padding: '10px 20px 10px 20px',
-        textDecoration: null
+        background: '#26768E'
     }
 };
 
@@ -123,21 +121,6 @@ var MarkdownEditor = React.createClass({
             border: 0,
             resize: 'vertical'
 
-        },
-        titleEdit: {
-            WebkitBoxSizing: 'border-box',
-            MozBoxSizing: 'border-box',
-            boxSizing: 'border-box',
-            width: '100%',
-            color: '#424242',
-            fontFamily: '"Exo", "Helvetica Neue", Helvetica, Arial, sans-serif',
-            fontSize: '2em',
-            fontWeight: 'bold',
-            padding: 'none',
-            border: 'none',
-            margin: '-1px 0 16px -1px',
-            lineHeight: '1.7',
-            background: 'none'
         }
     },
 

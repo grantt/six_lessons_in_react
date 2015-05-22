@@ -54,7 +54,7 @@ var Button = React.createClass({
 });</code></pre>
         <h2>Style Context</h2>
         <p>Our styles object has global context and can be applied to any component, but what if we want to modify this button to have a different color. We can assign a style object to the component itself and then combine the global and local styles in the attribute assignment.</p>
-                <pre><code>var styles = {
+        <pre><code>var styles = {
         button: {
         border: 0,
         WebkitBorderRadius: 3,
@@ -70,7 +70,9 @@ var Button = React.createClass({
 var Button = React.createClass({
     displayName : 'Button',
     styles : {
-        background: '#ff9501'
+        button: {
+            background: '#ff9501'
+        }
     },
     render: function() {
         return (
@@ -82,6 +84,93 @@ var Button = React.createClass({
         );
     }
 });</code></pre>
+        <h2>Handling Pseudo-classes</h2>
+        <p>If want to handle styling for hovers and other pseudo-classes, we can rely on state of the component. We will monitor the <code>onMouseOver</code> and <code>onMouseOut</code> events of the component to set the state and change the applied classes.</p>
+        <pre><code>var Button = React.createClass({
+    displayName : 'Button',
+    styles : {
+        button: {
+            background: '#ff9501'
+        },
+        hoverButton: {
+            color: '#34ed12'
+        }
+    },
+    getInitialState: function() {
+        return {buttonHover: false}
+    },
+    setHoverTrue: function() {
+        this.setState({
+            buttonHover: true
+        });
+    },
+        setHoverFalse: function() {
+        this.setState({
+            buttonHover: false
+        });
+    },
+    render: function() {
+        var baseStyle={_.extend({}, styles.button, this.styles.button}
+        return (
+            &lt;button
+            style={this.state.buttonHover ? _.extend({}, baseStyle, styles.buttonHover) : baseStyle}
+            onMouseOver={this.setHoverTrue}
+            onMouseOut={this.setHoverFalse}
+            onClick={this.handleClick}
+            &gt;Click Me!
+            &lt;/button&gt;
+        );
+    }
+});</code></pre>
+        <h2>Application</h2>
+        <p>For the purposes of our tutorial, let's apply some styling to our application. First, let's define some base global styles for the button:</p>
+        <pre><code>// Base CSS styles
+var styles = {
+    button: {
+        border: 0,
+        WebkitBorderRadius: 3,
+        MozBorderRadius: 3,
+        borderRadius: 3,
+        color: '#ffffff',
+        fontSize: 12,
+        background: '#3299bb',
+        padding: '10px 20px 10px 20px',
+        textDecoration: null
+    },
+    buttonHover: {
+        background: '#26768E'
+    }
+};</code></pre>
+        <p>Next let's add some styling that is only in the context of the <code>MarkdownEditor</code> component.</p>
+        <pre><code>var MarkdownEditor = React.createClass({
+    displayName : 'MarkdownEditor',
+
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
+
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '43.0%',
+            marginLeft: '1.0%'
+        },
+        textarea: {
+            fontFamily: 'Courier, monospace',
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            width: '100%',
+            minHeight: '500px',
+            border: 0,
+            resize: 'vertical'
+        }
+    },
+...</code></pre>
         <h2>Further Reading</h2>
         <ul>
             <li><a href="https://facebook.github.io/react/docs/tags-and-attributes.html" target="_blank">React Tags and Attributes</a></li>

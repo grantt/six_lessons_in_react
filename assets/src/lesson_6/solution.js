@@ -85,9 +85,7 @@ var styles = {
         textDecoration: null
     },
     buttonHover: {
-        background: '#26768E',
-        padding: '10px 20px 10px 20px',
-        textDecoration: null
+        background: '#26768E'
     }
 };
 
