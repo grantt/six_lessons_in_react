@@ -197,7 +197,7 @@ var Sidebar = React.createClass({
 
     setZeroClipboardText: function() {
         if (this.state.clipboardClient) {
-            this.state.clipboardClient.setText(this.state.markdownInput);
+            this.state.clipboardClient.setText(this.state.document.text);
         }
     },
 
