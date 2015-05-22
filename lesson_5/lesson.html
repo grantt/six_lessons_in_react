@@ -8,77 +8,161 @@
   <body>
     <h1>Lesson 5 - Advanced Actions</h1>
     <div id="container">
-        <p>In any sufficiently complex frontend application, CSS management becomes increasingly problematic. In effect, CSS styles are global variables without reliable scoping, so the introduction of a broad style can severely impact the look of an application.</p>
+        <p>Let's now add an additional level of complexity to our application by introducing a sidebar of actions to modify the document. These will include the ability to name the document, copy the document content, and clear the document content.</p>
+        <p>First let's introduce the <code>Sidebar</code> component as we would any new react component.</p>
+        <pre><code>var Sidebar = React.createClass({
+    displayName : 'Sidebar',
 
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
 
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '12%',
+            backgroundColor: '#424242',
+            color: '#e9e9e9'
+        },
+        ul: {
+            padding: '0px 5px',
+            marginTop: '0px',
+            marginBottom: '0px'
+        },
+        li: {
+            paddingTop: '2px',
+            paddingBottom: '2px',
+            cursor: 'pointer'
+        },
+        i: {
+            width: '25px'
+        }
+    },
 
-        <p>The preview component is relatively simple, it just needs to listen for any changes in the <code>MarkdownInputStore</code> and render the compiled markup as HTML. In order to properly listen to the store, we once again add <code>FluxMixin</code> and <code>Fluxxor.StoreWatchMixin</code> while adding a <code>getStateFromFlux</code> method. </p>
-        <pre><code>var MarkdownPreview = React.createClass({
-  mixins: [
-    FluxMixin,
-    Fluxxor.StoreWatchMixin('MarkdownInputStore')
-  ],
-  getStateFromFlux: function() {
-    var flux = this.getFlux();
-    return flux.store('MarkdownInputStore').getState();
-  },
-  render: function() {
-    return ()
-  }
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentStore').getState();
+    },
+
+    render: function() {
+    return (
+    &lt;div style={this.styles.container}&gt;
+        &lt;ul style={this.styles.ul}&gt;
+            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
+            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-clipboard"/&gt;Copy Content&lt;/li&gt;
+            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+    );
+    }
 });</code></pre>
-        <p>Meanwhile, we need to register a corresponding action with the dispatcher and have the <code>MarkdownInputStore</code> to set the value of <code>markdownInput</code> via an <code>updatePreview</code> method and emit a change event.</p>
-        <pre><code>var constants = {
-  // Previous code here
-  UPDATE_PREVIEW: "UPDATE_PREVIEW"
+        <p>We've hooked this component up to Fluxxor and it is listenting to the <code>DocumentStore</code> for it's state. We've also applied some styling to the elements we want to render in the same manner as the previous lesson.</p>
+        <p>Now let's add the actions one by one starting with clearing the content. For this action we will assign a <code>handleClear</code> callback to the <code>onClick</code> event handler, fire a Flux action from that callback, and propogate it through the dispatcher to the store to update the component state.</p>
+        <pre><code>// Action constants
+            var constants = {
+    CLEAR_INPUT: 'CLEAR_INPUT',
+    ...
 };
 
 var actions = {
-  // Previous code here
-  updatePreview: function(currentMarkdownInput) {
-    this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
-  }
+    ...
+
+    clearInput: function() {
+    this.dispatch(constants.CLEAR_INPUT);
+    },
+
+    ...
 };
 
-var MarkdownInputStore = Fluxxor.createStore({
-  // Previous code here
-  updatePreview: function(currentInput) {
-    // tells whatever views are listening that the data has changed
-    this.markdownInput = currentInput;
-    this.emit('change');
-  },
-  // Previous code here
+// Stores
+var DocumentStore = Fluxxor.createStore({
+    mixins: [
+        FluxMixin
+    ],
+
+    initialize: function() {
+        this.document = {
+            'text': '',
+        };
+
+        this.bindActions(
+            ...
+            constants.CLEAR_INPUT, this.onClearInput
+        );
+    },
+    ...
+    onClearInput: function() {
+        this.document.text = '';
+
+        this.emit('change');
+    },
+
+    getState: function() {
+        return {
+            document: this.document
+        };
+    }
+});
+...
+var Sidebar = React.createClass({
+    displayName : 'Sidebar',
+
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
+
+    handleClear: function() {
+        var flux = this.getFlux();
+        flux.actions.clearInput();
+    },
+
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '12%',
+            backgroundColor: '#424242',
+            color: '#e9e9e9'
+        },
+        ul: {
+            padding: '0px 5px',
+            marginTop: '0px',
+            marginBottom: '0px'
+        },
+        li: {
+            paddingTop: '2px',
+            paddingBottom: '2px',
+            cursor: 'pointer'
+        },
+        i: {
+            width: '25px'
+        }
+    },
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentStore').getState();
+    },
+
+    render: function() {
+        return (
+            &lt;div style={this.styles.container}&gt;
+            &lt;ul style={this.styles.ul}&gt;
+            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
+            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-clipboard"/&gt;Copy Content&lt;/li&gt;
+            &lt;li style={this.styles.li}  onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;/div&gt;
+        );
+    }
 });</code></pre>
-        <p>In order to render the HTML itself, we need to utilize <code>dangerouslySetInnerHTML</code>. That prop is intended to sound scary due to the inherent vulnerabilities in security and issues with sanitizing input. For our tutorial it is a necessary risk and we feel it is an important facet of React to understand. Since React treats HTML in any state or prop as a string to avoid XSS attacks on rendering, <code>dangerouslySetInnerHTML</code> allows us to render HTML by passing it an object, keyed on <code>__html</code> with the value of our HTML string. In order to compile the markdown, we have included a helpful node module named <a href="https://github.com/chjj/marked" target="_blank">marked</a>. This allows us the ability to quickly compile the markdown in a sanitary way and pass it to <code>dangerouslySetInnerHTML</code>.</p>
-        <pre><code>var MarkdownPreview = React.createClass({
-  // Previous code here
-  render: function() {
-    return (
-      &lt;div dangerouslySetInnerHTML={ { __html: marked(this.state.markdownInput, {sanitize: true}) } } /&gt;
-    )
-  }
-});</code></pre>
-    <p>Now that we have multiple components, let's build a simple wrapper to handle the initial render and layout of the editor and preview components. This wrapper will simply arrange our components and allow us to call <code>React.render</code> with a single component rendering into the container and its child components rendering on cascade.</p>
-    <pre><code>var MarkdownEditor = React.createClass({
-  render: function() {
-    return (
-      &lt;div&gt;
-        &lt;MarkdownInput
-          flux={ flux }
-          textareaRows="10"
-          textAreaCols="50"
-        /&gt;
-        &lt;MarkdownPreview
-          flux={ flux }
-        /&gt;
-      &lt;/div&gt;
-    )
-  }
-});</code></pre>
-    <h2>Further Reading</h2>
-    <ul>
-        <li><a href="https://github.com/chjj/marked" target="_blank">marked</a></li>
-        <li><a href=https://facebook.github.io/react/tips/dangerously-set-inner-html.html">dangerouslySetInnerHTML</a></li>
-    </ul>
     </div>
     <div id="footerNav">
       <a href="../lesson_2/lesson.html">Previous Lesson</a> | <a href="../lesson_4/lesson.html">Next Lesson</a>
