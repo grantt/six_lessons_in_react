@@ -171,6 +171,84 @@ var styles = {
         }
     },
 ...</code></pre>
+        <p>We can then apply these styles as well as the global styles to the <code>MarkdownEditor</code> component's render method. Note that we also have included handlers for the hover state as described above. See if you can implement them yourself.</p>
+        <pre><code>...
+    render: function() {
+        return (
+            &lt;div style={this.styles.container}&gt;
+                &lt;h2&gt;Editor&lt;/h2&gt;
+                &lt;textarea
+                        style={this.styles.textarea}
+                        value={this.state.document.text}
+                        onChange={this.handleOnChange}
+                        onKeyUp={this.handleOnKeyUp}
+                        /&gt;
+                &lt;br /&gt;
+                &lt;button
+                        style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
+                        onMouseOver={this.setHoverTrue}
+                        onMouseOut={this.setHoverFalse}
+                        onClick={this.handleLoremIpsumClick}
+                        &gt;Get Lorem Ipsum!&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    }
+});</code></pre>
+        <p>Let's also style our <code>MarkdownPreview</code> component while we are at it. Similarly to above, let's define some styles in the context of the component.</p>
+        <pre><code>// Markdown preview Subcomponent
+var MarkdownPreview = React.createClass({
+    displayName : 'MarkdownPreview',
+    
+    mixins: [
+    FluxMixin,
+    Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
+    
+    styles: {
+        container: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            float: 'left',
+            width: '43.0%',
+            marginLeft: '1.0%'
+        },
+        mdPreview: {
+            WebkitBoxSizing: 'border-box',
+            MozBoxSizing: 'border-box',
+            boxSizing: 'border-box',
+            background: '#f0f0f0',
+            padding: '5px 15px',
+            minHeight: '500px'
+        }
+    },
+...</code></pre>
+        <p>And once again we will apply the styles to the component's render method.</p>
+        <pre><code>...
+    render: function() {
+        var div;
+        if (this.state.document.text) {
+            div = (&lt;div
+                id='mdPreview'
+                style={this.styles.mdPreview}
+                dangerouslySetInnerHTML={{__html: marked(this.state.document.text, {sanitize: true})}}
+            /&gt;);
+        } else {
+            div = (&lt;div
+                    id='mdPreview'
+                    style={this.styles.mdPreview}
+                    /&gt;);
+            }
+
+        return (
+            &lt;div style={this.styles.container}&gt;
+                &lt;h2&gt;Preview&lt;/h2&gt;
+                {div}
+            &lt;/div&gt;
+        );
+    }
+});</code></pre>
+        <p>Now that you have two nicely styled components, let's continue on to the next lesson.</p>
         <h2>Further Reading</h2>
         <ul>
             <li><a href="https://facebook.github.io/react/docs/tags-and-attributes.html" target="_blank">React Tags and Attributes</a></li>

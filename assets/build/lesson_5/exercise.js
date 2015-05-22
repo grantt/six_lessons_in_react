@@ -181,7 +181,8 @@ var MarkdownEditor = React.createClass({
                 React.createElement("br", null), 
                 React.createElement("button", {
                     style: this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button, 
-                    onMouseOver: this.setHoverTrue, onMouseOut: this.setHoverFalse, 
+                    onMouseOver: this.setHoverTrue, 
+                    onMouseOut: this.setHoverFalse, 
                     onClick: this.handleLoremIpsumClick
                 }, "Get Lorem Ipsum!")
             )
