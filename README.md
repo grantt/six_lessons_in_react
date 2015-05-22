@@ -51,21 +51,25 @@ Flux architecture is introduced along with the idea of unidirectional data flow.
 Lorem Ipsum Generator and Textarea
 
 ## Lesson 3 - Multiple and Advanced Components
+Introduction of multiple components listening to a single data store. Registration of additional actions, and use of a controller view to manage the constituent components.
 
 ### Exercises
 Markdown Input and Preview
 
 ## Lesson 4 - CSS in React
+Style definition and translation in JSX. Scope of styles to global and component scopes. Pseudo-classes and state management in component.
 
 ### Exercises
 Styled Markdown Editor
 
 ## Lesson 5 - Advanced Actions
+Introduction of a sidebar with several actions related to the document, clear and rename. Add complexity to the Flux dispatcher to handle new actions.
 
 ### Exercises
 Markdown Editor with Sidebar
 
 ## Lesson 6 - Advanced Stores and Interaction
+Addition of multiple documents by expanding the data store and introducing a tabbed bar to switch between document. Management of an active document to allow the preview and sidebar to listen to the porper actions.
 
 ### Exercises
 Multi-document Markdown Editor

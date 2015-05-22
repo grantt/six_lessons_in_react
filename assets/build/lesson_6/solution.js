@@ -339,20 +339,7 @@ var Sidebar = React.createClass({
         flux.actions.editDocumentTitle();
     },
 
-    setZeroClipboardText: function() {
-        if (this.state.clipboardClient) {
-            this.state.clipboardClient.setText(this.state.document.text);
-        }
-    },
-
-    componentDidMount: function() {
-        var client = new ZeroClipboard(document.getElementById('clipboard'));
-        this.setState({clipboardClient: client});
-        this.setZeroClipboardText();
-    },
-
     render: function() {
-        this.setZeroClipboardText();
         var deleteLi;
         if (this.state.documents.length > 0) {
             deleteLi = React.createElement("li", {style: this.styles.li, onClick: this.handleDelete}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-trash-o"}), "Delete");
@@ -361,7 +348,6 @@ var Sidebar = React.createClass({
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("ul", {style: this.styles.ul}, 
                     React.createElement("li", {style: this.styles.li, onClick: this.handleRename}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-pencil"}), "Rename Document"), 
-                    React.createElement("li", {style: this.styles.li, id: "clipboard"}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-clipboard"}), "Copy Content"), 
                     React.createElement("li", {style: this.styles.li, onClick: this.handleClear}, React.createElement("i", {style: this.styles.i, className: "fa-lg fa fa-eraser"}), "Clear"), 
                     deleteLi
                 )

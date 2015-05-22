@@ -195,25 +195,11 @@ var Sidebar = React.createClass({
         flux.actions.editDocumentTitle();
     },
 
-    setZeroClipboardText: function() {
-        if (this.state.clipboardClient) {
-            this.state.clipboardClient.setText(this.state.document.text);
-        }
-    },
-
-    componentDidMount: function() {
-        var client = new ZeroClipboard(document.getElementById('clipboard'));
-        this.setState({clipboardClient: client});
-        this.setZeroClipboardText();
-    },
-
     render: function() {
-        this.setZeroClipboardText();
         return (
             <div style={this.styles.container}>
                 <ul style={this.styles.ul}>
                     <li style={this.styles.li} onClick={this.handleRename}><i style={this.styles.i} className="fa-lg fa fa-pencil"/>Rename Document</li>
-                    <li style={this.styles.li} id="clipboard"><i style={this.styles.i} className="fa-lg fa fa-clipboard"/>Copy Content</li>
                     <li style={this.styles.li} onClick={this.handleClear}><i style={this.styles.i} className="fa-lg fa fa-eraser"/>Clear</li>
                 </ul>
             </div>
