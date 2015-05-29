@@ -4,9 +4,9 @@
 @font-face { font-family: Exo; font-weight: lighter; src: url('../fonts/Exo2.0-Thin.otf');}
 
 body {
-  background: #e9e9e9;
+  background: #f9f9f9;
   font-family: "Exo", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.7;
   margin: 0;
   padding: 30px;
@@ -22,7 +22,7 @@ a:hover {
 }
 
 pre {
-  background-color: #e9e9e9;
+  background-color: #eeeeee;
   border: 1px solid #bcbcbc;
   border-radius: 3px;
   margin: 0 2px;

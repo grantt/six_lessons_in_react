@@ -29,7 +29,7 @@
   &lt;SomeComponent /&gt;,
   document.getElementById('container')
 );</code></pre>
-        <p>SomeComponent would have it's <code>render()</code> method called and the resulting tree of React components rendered and inserted into the DOM replacing the contents of <code>&lt;div id="container"&gt;&lt;/div&gt;</code>.</p>
+        <p>SomeComponent would have its <code>render()</code> method called and the resulting tree of React components rendered and inserted into the DOM replacing the contents of <code>&lt;div id="container"&gt;&lt;/div&gt;</code>.</p>
         <h2>Component Properties</h2>
         <p>We can pass data into a component by attributes defined when the component is instantiated. This data, called component properties, is then accessible throughout the component via <code>this.props</code>. Properties are analagous to configuration or options of a component. They should be considered immutable and not change over the lifecycle of the component. In JSX syntax such as that returned by the <code>render()</code> method, these properties, or any Javascript expression, can be accessed with curly brackets. For example, here is a simple rendering of two header tags receiving data and then displaying it from <code>this.props</code>.</p>
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
