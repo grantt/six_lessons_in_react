@@ -6,6 +6,7 @@ var gulp = require('gulp'),
   reload = browserSync.reload;
   
 var paths = {
+  startUrl: '/lesson_1/lesson.html',
   scripts: ['lesson_*/src/*.js']
 };
  
@@ -14,7 +15,7 @@ gulp.task('server', function() {
     server: {
       baseDir: './'
     },
-    startPath: '/lesson_1/lesson.html'
+    startPath: paths.startUrl
   });
 });
 

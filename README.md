@@ -37,7 +37,12 @@ For these lessons, I am assuming the user has a novice or greater understanding 
   * Actions
 
 ### Exercises
-Set-up an environment
+Set-up an environment:
+
+1. `npm install`
+  * reads dependencies from `package.json` and installs them
+2. `gulp`
+  * starts a web server and watches source folders for changes
 
 ## Lesson 1 - Basics
 Introduce basic React components by building a "Hello World" component that has a render method returning JSX. Next we introduce the concept of component properties, default properties, as well as how to render a component in the DOM. Finally, component state and event handlers are introduced.

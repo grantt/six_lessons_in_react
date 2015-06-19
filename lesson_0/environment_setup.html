@@ -4,8 +4,8 @@
     <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
     <title>Environment Setup</title>
     <link rel="stylesheet" href="../../assets/css/base.css" />
-    <script src="../../assets/build/react.js"></script>
-    <script src="../../assets/build/JSXTransformer.js"></script>
+    <script src="../../assets/js/react.js"></script>
+    <script src="../../assets/js/JSXTransformer.js"></script>
   </head>
   <body>
     <h1>Environment Setup</h1>
@@ -15,15 +15,13 @@
         <div>
         <p>Install react-tools</p>
         <pre>
-          <code class="language-text" data-lang="text">npm install -g react-tools
-          </code>
+          <code className="language-text" data-lang="text"> npm install </code>
         </pre>
         <p>When you want to build compiled files, simply run:</p>
         <pre>
-          <code class="language-text" data-lang="text">jsx --watch assets/src/ assets/build/
-          </code>
+          <code className="language-text" data-lang="text"> gulp </code>
         </pre>
-        <p>That command will watch your src directory and update your build files with any changes.</p>
+        <p>That command will start a webserver, watch your src directories, and update your build files with any changes. Your browser will automatically refresh.</p>
         <p>You may also wish to install <a href="https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi">React Developer Tools for Chrome</a>.</p>
         </div>,
         document.getElementById('container')
