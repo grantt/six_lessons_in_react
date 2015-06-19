@@ -6,10 +6,11 @@
   "devDependencies": {
     "browser-sync": "^2.7.12",
     "gulp": "^3.9.0",
-    "gulp-react": "^3.0.1"
+    "gulp-react": "^3.0.1",
+    "gulp-rename": "^1.2.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
