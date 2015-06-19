@@ -1,0 +1,24 @@
+{
+  "name": "six_lessons_in_react",
+  "version": "1.0.0",
+  "description": "Collaborative learning course in React JS",
+  "main": " ",
+  "devDependencies": {
+    "browser-sync": "^2.7.12",
+    "gulp": "^3.9.0",
+    "gulp-react": "^3.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grantt/six_lessons_in_react.git"
+  },
+  "author": "Grant Toeppen <grant@adroll.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grantt/six_lessons_in_react/issues"
+  },
+  "homepage": "https://github.com/grantt/six_lessons_in_react"
+}
