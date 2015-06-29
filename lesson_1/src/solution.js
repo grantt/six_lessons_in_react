@@ -1,33 +1,35 @@
 // Lesson 1 Solution - solution.js
 
-var HelloWorld = React.createClass({
-
-  getDefaultProps: function() {
-    return {
-      name: 'User'
+var TitleBar = React.createClass({
+    getDefaultProps: function() {
+        return {
+            title: 'A Title',
+            subtitle: 'Just a Subtitle'
+        }
+    },
+    getInitialState: function() {
+        return {
+            likes: 0
+        }
+    },
+    handleClick: function() {
+        this.setState({
+            likes: this.state.likes + 1
+        });
+    },
+    render: function () {
+        return (
+            <div>
+                <h1>{this.props.title}</h1>
+                <h2>{this.props.subtitle}</h2>
+                <span>Likes: {this.state.likes}</span>
+                <button onClick={this.handleClick} type="button">Like this</button>
+            </div>
+        )
     }
-  },
-  getInitialState: function() {
-    return {
-      greetings: 0
-    }
-  },
-  handleClick: function() {
-    this.setState({
-      greetings: this.state.greetings + 1
-    });
-  },
-  render: function () {
-    return (
-      <div>
-        <h2>Hello {this.props.name}!</h2>
-      <p>Greetings to {this.props.name}: {this.state.greetings}</p>
-        <button onClick={this.handleClick} type="button">Say Hi!</button>
-      </div>
-    )
-  }
 });
+
 React.render(
-  <HelloWorld name="Jomo Blarrem" />,
-  document.getElementById('container')
+    <TitleBar />,
+    document.getElementById('container')
 );
