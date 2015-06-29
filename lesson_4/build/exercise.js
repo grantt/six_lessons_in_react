@@ -117,7 +117,7 @@ var MarkdownEditor = React.createClass({
             React.createElement("div", null, 
                 React.createElement("h2", null, "Editor"), 
                 React.createElement("textarea", {
-                    rows:  this.props.textareaRows, 
+                    rows:  this.props.textAreaRows, 
                     cols:  this.props.textAreaCols, 
                     value: this.state.document.text, 
                     onChange: this.handleOnChange, 
@@ -187,7 +187,7 @@ var MarkdownViewer = React.createClass({
             React.createElement("div", null, 
                 React.createElement(MarkdownEditor, {
                     flux: flux, 
-                    textareaRows: "10", 
+                    textAreaRows: "10", 
                     textAreaCols: "50"}
                 ), 
                 React.createElement(MarkdownPreview, {

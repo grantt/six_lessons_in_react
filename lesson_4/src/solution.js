@@ -266,8 +266,6 @@ var MarkdownViewer = React.createClass({
             <div>
                 <MarkdownEditor
                     flux={flux}
-                    textareaRows="10"
-                    textAreaCols="50"
                 />
                 <MarkdownPreview
                     flux={flux}
