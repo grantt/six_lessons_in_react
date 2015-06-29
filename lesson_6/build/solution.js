@@ -105,9 +105,9 @@ var DocumentsStore = Fluxxor.createStore({
             constants.DELETE_DOCUMENT, this.onDeleteDocument,
             constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
             constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
             constants.CLEAR_INPUT, this.onClearInput,
             constants.UPDATE_PREVIEW, this.onUpdatePreview,
             constants.SELECT_DOCUMENT, this.onSelectDocument
@@ -163,15 +163,15 @@ var DocumentsStore = Fluxxor.createStore({
         this.emit('change');
     },
 
-    generateLoremIpsum:function() {
+    handleLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
-    generateLoremIpsumError: function() {
+    handleLoremIpsumError: function() {
         console.error('There was an error generating lorem ipsum...');
     },
 
-    generateLoremIpsumSuccess: function(loremIpsum) {
+    handleLoremIpsumSuccess: function(loremIpsum) {
         this.activeDocument.text += loremIpsum;
 
         this.emit('change');
