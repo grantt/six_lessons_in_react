@@ -135,7 +135,7 @@ React.render(
     this.dispatch(constants.GENERATE_LOREM_IPSUM);
 
     var that = this;
-    $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
+    $.get('http://baconipsum.com/api/?type=all-meat&amp;paras=2&start-with-lorem=1', function(data, statusText) {
       if (statusText === 'success') {
         that.dispatch(constants.GENERATE_LOREM_IPSUM_SUCCESS, data);
       } else {
