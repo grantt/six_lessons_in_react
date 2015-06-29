@@ -178,16 +178,16 @@ React.render(
   this.emit('change');
 }</code></pre>
 
-        <p>Now to make sure it all works together, let's make sure that the Markdown input component can get state information from the DocumentStore.</p>
+        <p>Now to make sure it all works together, let's make sure that the Markdown input component can get state information from the DocumentStore and use the generated ipsum as the markdown input.</p>
 
         <p>First we need to add a getState helper to the DocumentStore.</p>
 
         <pre><code>getState: function() {
   return {
-    loremIpsum: this.loremIpsum
+    markdownInput: this.generatedIpsum
   };
 }</code></pre>
-        <p>Now the Markdown input component can get state information the store.</p>
+        <p>Now the Markdown input component can get state information from the store.</p>
 
         <pre><code>var MarkdownInput = React.createClass({
   mixins: [
