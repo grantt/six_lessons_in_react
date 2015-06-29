@@ -3,9 +3,9 @@
   <head>
     <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
     <title>Environment Setup</title>
-    <link rel="stylesheet" href="../../assets/css/base.css" />
-    <script src="../../assets/build/react.js"></script>
-    <script src="../../assets/build/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="../assets/css/base.css" />
+    <script src="../assets/js/react.js"></script>
+    <script src="../assets/js/JSXTransformer.js"></script>
   </head>
   <body>
     <h1>Environment Setup</h1>
@@ -15,12 +15,12 @@
         <div>
         <p>Install react-tools</p>
         <pre>
-          <code class="language-text" data-lang="text">npm install -g react-tools
+          <code className="language-text" data-lang="text">npm install -g react-tools
           </code>
         </pre>
         <p>When you want to build compiled files, simply run:</p>
         <pre>
-          <code class="language-text" data-lang="text">jsx --watch assets/src/ assets/build/
+          <code className="language-text" data-lang="text">jsx --watch lesson_{N}/src/ lesson_{N}/build/
           </code>
         </pre>
         <p>That command will watch your src directory and update your build files with any changes.</p>
