@@ -76,7 +76,7 @@ React.render(
 );</code></pre>
         <p>This function is invoked a single time and cached when the class is created and will be overwritten by any property passed into the component.</p>
         <h2>Component State</h2>
-        <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic, that affects the rendering of the component. State is set only from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
+        <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic data, that affects the rendering of the component. State is set only from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
   getDefaultProps: function() {
     return {
