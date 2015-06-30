@@ -421,17 +421,14 @@ var MarkdownEditor = React.createClass({
     // the textarea would not be editable by users. this makes the
     // text area editable for users
     handleOnChange: function(event) {
-        var state = _.extend(this.state.activeDocument, {text: event.target.value});
+        var flux = this.getFlux();
+        var state = _.extend(this.state.document, {text: event.target.value});
         this.setState(
             {
-                activeDocument: state
+                document: state
             }
         );
-    },
-
-    handleOnKeyUp: function() {
-        var flux = this.getFlux();
-        flux.actions.updatePreview(this.state.activeDocument.text);
+        flux.actions.updatePreview(this.state.document.text);
     },
 
     setHoverTrue: function() {
@@ -479,8 +476,7 @@ var MarkdownEditor = React.createClass({
                     style: this.styles.textarea, 
                     data: this.state.activeDocument.id, 
                     value: this.state.activeDocument.text, 
-                    onChange: this.handleOnChange, 
-                    onKeyUp: this.handleOnKeyUp}
+                    onChange: this.handleOnChange}
                 ), 
                 React.createElement("br", null), 
                 React.createElement("button", {
@@ -585,7 +581,6 @@ var MarkdownViewer = React.createClass({
 
     }
 });
-
 
 // Application Controller View
 var Application = React.createClass({
