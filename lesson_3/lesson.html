@@ -31,6 +31,13 @@
 
 var actions = {
   // Previous code here
+  updatePreview: function(currentMarkdownInput) {
+    this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
+  }
+};
+
+var DocumentStore = Fluxxor.createStore({
+  // Previous code here
   initialize: function() {
     this.document = {
       'text': ''
@@ -40,16 +47,10 @@ var actions = {
       constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
       constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
       constants.UPDATE_PREVIEW, this.onUpdatePreview
-    );
+    )
   },
-  onUpdatePreview: function(currentMarkdownInput) {
-    this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
-  }
-};
 
-var DocumentStore = Fluxxor.createStore({
-  // Previous code here
-  updatePreview: function(currentInput) {
+  onUpdatePreview: function(currentInput) {
     // tells whatever views are listening that the data has changed
     this.markdownInput = currentInput;
     this.emit('change');
