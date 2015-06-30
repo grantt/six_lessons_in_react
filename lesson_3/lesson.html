@@ -52,7 +52,7 @@ var DocumentStore = Fluxxor.createStore({
 
   onUpdatePreview: function(currentInput) {
     // tells whatever views are listening that the data has changed
-    this.markdownInput = currentInput;
+    this.document.text = payload;
     this.emit('change');
   },
   // Previous code here
@@ -62,7 +62,7 @@ var DocumentStore = Fluxxor.createStore({
   // Previous code here
   render: function() {
     return (
-      &lt;div dangerouslySetInnerHTML={{__html: marked(this.state.markdownInput, {sanitize: true})}} /&gt;
+      &lt;div dangerouslySetInnerHTML={{__html: marked(this.state.document.text, {sanitize: true})}} /&gt;
     )
   }
 });</code></pre>
