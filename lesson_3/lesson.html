@@ -67,11 +67,11 @@ var DocumentStore = Fluxxor.createStore({
   }
 });</code></pre>
     <p>Now that we have multiple components, let's build a simple wrapper to handle the initial render and layout of the editor and preview components. This wrapper will simply arrange our components and allow us to call <code>React.render</code> with a single component rendering into the container and its child components rendering on cascade.</p>
-    <pre><code>var MarkdownEditor = React.createClass({
+    <pre><code>var MarkdownViewer = React.createClass({
   render: function() {
     return (
       &lt;div&gt;
-        &lt;MarkdownInput
+        &lt;MarkdownEditor
           flux={flux}
           textAreaRows="10"
           textAreaCols="50"
