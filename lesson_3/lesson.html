@@ -31,7 +31,18 @@
 
 var actions = {
   // Previous code here
-  updatePreview: function(currentMarkdownInput) {
+  initialize: function() {
+    this.document = {
+      'text': ''
+    };
+    this.bindActions(
+      constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+      constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+      constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
+      constants.UPDATE_PREVIEW, this.onUpdatePreview
+    );
+  },
+  onUpdatePreview: function(currentMarkdownInput) {
     this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
   }
 };
