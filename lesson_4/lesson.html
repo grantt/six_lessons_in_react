@@ -77,7 +77,7 @@ var Button = React.createClass({
     render: function() {
         return (
             &lt;button
-                style={_.extend({}, styles.button, this.styles.button}
+                style={_.extend({}, styles.button, this.styles.button)}
                 onClick={this.handleClick}
                 &gt;Click Me!
             &lt;/button&gt;
@@ -85,7 +85,7 @@ var Button = React.createClass({
     }
 });</code></pre>
         <h2>Handling Pseudo-classes</h2>
-        <p>If want to handle styling for hovers and other pseudo-classes, we can rely on state of the component. We will monitor the <code>onMouseOver</code> and <code>onMouseOut</code> events of the component to set the state and change the applied classes.</p>
+        <p>If you want to handle styling for hovers and other pseudo-classes, we can rely on state of the component. We will monitor the <code>onMouseOver</code> and <code>onMouseOut</code> events of the component to set the state and change the applied classes.</p>
         <pre><code>var Button = React.createClass({
     displayName : 'Button',
     styles : {
