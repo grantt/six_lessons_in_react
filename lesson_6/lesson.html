@@ -95,7 +95,7 @@ var DocumentsStore = Fluxxor.createStore({
     }
 });
 </code></pre>
-        <p>We have introduced a new paradigm to the state, instead of a single document, we specify an <code>activeDocument</code> and an array of <code>documents</code> that corresponds to all available markup documents. Upon initialization of the store, we call <code>onCreateDocument</code> to populate the <code>documents</code> array and set <code>activeDocument</code>. Notice that we have also edited <code>onUpdatePreview</code> and <code>onSaveDocumentTitle</code> to reference <code>activeDocument</code>. Next we can make similar alterations to the <code>MarkdownEditor</code> and <code>MarkdownPreview</code> components.</p>
+        <p>We have introduced a new paradigm to the state, instead of a single document, we specify an <code>activeDocument</code> and an array of <code>documents</code> that corresponds to all available markup documents. Upon initialization of the store, we call <code>onCreateDocument</code> to populate the <code>documents</code> array and set <code>activeDocument</code>. Notice that we have also edited <code>onUpdatePreview</code> and <code>onSaveDocumentTitle</code> to reference <code>activeDocument</code>. Next we can make similar alterations to the <code>MarkdownEditor</code> and <code>MarkdownPreview</code> components to listen to the new <code>DocumentsStore</code> and gather the correct state for display.</p>
         <pre><code>// Markdown editor Subcomponent
 var MarkdownEditor = React.createClass({
     displayName : 'MarkdownEditor',
@@ -191,26 +191,6 @@ var MarkdownPreview = React.createClass({
             {div}
             &lt;/div&gt;
         )
-    }
-});</code></pre>
-        <p>Next, let's update the <code>Sidebar</code> to look to the new data store in the same manner as the above components.</p>
-        <pre><code>var Sidebar = React.createClass({
-    displayName : 'Sidebar',
-    ...
-    getStateFromFlux: function() {
-    var flux = this.getFlux();
-    return flux.store('DocumentsStore').getState();
-    },
-    ...
-    render: function() {
-        return (
-            &lt;div style={this.styles.container}&gt;
-            &lt;ul style={this.styles.ul}&gt;
-                &lt;li style={this.styles.li} onClick={this.handleRename}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
-                &lt;li style={this.styles.li} onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
-            &lt;/ul&gt;
-            &lt;/div&gt;
-        );
     }
 });</code></pre>
         <p>Next, let's add our <code>TabBar</code> to the application to manage all the documents and enable us to switch between them. This component will read from the <code>DocumentsStore</code> and iterate through the available documents creating a <code>DocumentTab</code> with conditional highlighting of the active one and a button to create a new document.</p>
@@ -365,6 +345,25 @@ var actions = {
         this.dispatch(constants.UPDATE_ACTIVE_DOCUMENT, doc);
     }
 };</code></pre>
+        <p>And we also need to include the <code>TabBar</code> in our <code>Application</code> component for rendering on page. Something like this should work:</p>
+        <pre><code>// Application Controller View
+var Application = React.createClass({
+    displayName : 'Application',
+
+    mixins: [
+        FluxMixin
+    ],
+
+    render: function() {
+        return (
+            &lt;div&gt;
+                &lt;TabBar/&gt;
+                &lt;Sidebar/&gt;
+                &lt;MarkdownViewer/&gt;
+            &lt;/div&gt;
+        )
+    }
+});</code></pre>
         <p>Now, let's update the <code>Sidebar</code> to include an option to delete the <code>activeDocument</code>.</p>
         <pre><code>var Sidebar = React.createClass({
     displayName : 'Sidebar',
@@ -435,41 +434,7 @@ var actions = {
         );
     }
 });</code></pre>
-        <p>Finally, with so many components, let's introduce an <code>Application</code> controller to wrap up all the components nicely.</p>
-        <pre><code>// Application Controller View
-var Application = React.createClass({
-    displayName : 'Application',
-
-    mixins: [
-        FluxMixin
-    ],
-
-    render: function() {
-        return (
-        &lt;div&gt;
-            &lt;TabBar/&gt;
-            &lt;Sidebar/&gt;
-            &lt;MarkdownViewer /&gt;
-        &lt;/div&gt;
-        )
-    }
-});
-
-// Fluxxor application initialization and main rendering
-var stores = {
-    DocumentsStore: new DocumentsStore()
-};
-
-// register actions and stores with fluxxor application
-// this creates a flux instance
-var flux = new Fluxxor.Flux(stores, actions);
-
-React.render(
-    &lt;Application
-            flux={flux}
-            /&gt;,
-    document.getElementById('container')
-);</code></pre>
+        <p>Notice that we've added a check for the length of <code>this.state.documents</code> to conditionally show the delete button. This means we must include the <code>StoreWatchMixin</code> and the <code>getStateFromFlux</code> method on this component since we access the state and must be informed of changes to our <code>DocumentsStore</code>.</p>
         <h2>Exercise</h2>
         <p>Using the lesson above, extend the data store to handle multiple documents and add a navigation bar to control the selected document.</p>
         <br />

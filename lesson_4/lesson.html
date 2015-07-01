@@ -110,7 +110,7 @@ var Button = React.createClass({
         });
     },
     render: function() {
-        var baseStyle={_.extend({}, styles.button, this.styles.button}
+        var baseStyle = _.extend({}, styles.button, this.styles.button);
         return (
             &lt;button
             style={this.state.buttonHover ? _.extend({}, baseStyle, styles.buttonHover) : baseStyle}
