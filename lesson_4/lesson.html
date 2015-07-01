@@ -24,30 +24,22 @@
         padding: '10px 20px 10px 20px',
         textDecoration: null
     }
-}</code></pre>
+};</code></pre>
         <h2>Applying Styles</h2>
         <p>To apply style objects we have created, we can rely on the standard attributes recognized by React, namely <code>style</code>. We can simply pass our style object, in braces, to the component's style attribute and React handles the rest.</p>
         <pre><code>var styles = {
-    button: {
-        border: 0,
-        WebkitBorderRadius: 3,
-        MozBorderRadius: 3,
-        borderRadius: 3,
-        color: '#ffffff',
-        fontSize: 12,
-        background: '#3299bb',
-        padding: '10px 20px 10px 20px',
-        textDecoration: null
-    }
-}
+    ...
+};
+
 var Button = React.createClass({
     displayName : 'Button',
     render: function() {
         return (
             &lt;button
-                    style={styles.button}
-                    onClick={this.handleClick}
-                    &gt;Click Me!
+                style={styles.button}
+                onClick={this.handleClick}
+            &gt;
+                Click Me!
             &lt;/button&gt;
         );
     }
@@ -55,18 +47,9 @@ var Button = React.createClass({
         <h2>Style Context</h2>
         <p>Our styles object has global context and can be applied to any component, but what if we want to modify this button to have a different color. We can assign a style object to the component itself and then combine the global and local styles in the attribute assignment.</p>
         <pre><code>var styles = {
-        button: {
-        border: 0,
-        WebkitBorderRadius: 3,
-        MozBorderRadius: 3,
-        borderRadius: 3,
-        color: '#ffffff',
-        fontSize: 12,
-        background: '#3299bb',
-        padding: '10px 20px 10px 20px',
-        textDecoration: null
-    }
-}
+    ...
+};
+
 var Button = React.createClass({
     displayName : 'Button',
     styles : {
@@ -79,7 +62,8 @@ var Button = React.createClass({
             &lt;button
                 style={_.extend({}, styles.button, this.styles.button)}
                 onClick={this.handleClick}
-                &gt;Click Me!
+            &gt;
+                Click Me!
             &lt;/button&gt;
         );
     }
@@ -104,7 +88,7 @@ var Button = React.createClass({
             buttonHover: true
         });
     },
-        setHoverFalse: function() {
+    setHoverFalse: function() {
         this.setState({
             buttonHover: false
         });
@@ -113,11 +97,12 @@ var Button = React.createClass({
         var baseStyle={_.extend({}, styles.button, this.styles.button}
         return (
             &lt;button
-            style={this.state.buttonHover ? _.extend({}, baseStyle, styles.buttonHover) : baseStyle}
-            onMouseOver={this.setHoverTrue}
-            onMouseOut={this.setHoverFalse}
-            onClick={this.handleClick}
-            &gt;Click Me!
+                style={this.state.buttonHover ? _.extend({}, baseStyle, styles.buttonHover) : baseStyle}
+                onMouseOver={this.setHoverTrue}
+                onMouseOut={this.setHoverFalse}
+                onClick={this.handleClick}
+            &gt;
+                Click Me!
             &lt;/button&gt;
         );
     }
@@ -172,24 +157,24 @@ var styles = {
     },
 ...</code></pre>
         <p>We can then apply these styles as well as the global styles to the <code>MarkdownEditor</code> component's render method. Note that we also have included handlers for the hover state as described above. See if you can implement them yourself.</p>
-        <pre><code>...
+        <pre><code>    ...
     render: function() {
         return (
             &lt;div style={this.styles.container}&gt;
                 &lt;h2&gt;Editor&lt;/h2&gt;
                 &lt;textarea
-                        style={this.styles.textarea}
-                        value={this.state.document.text}
-                        onChange={this.handleOnChange}
-                        onKeyUp={this.handleOnKeyUp}
-                        /&gt;
+                    style={this.styles.textarea}
+                    value={this.state.document.text}
+                    onChange={this.handleOnChange}
+                    onKeyUp={this.handleOnKeyUp}
+                /&gt;
                 &lt;br /&gt;
                 &lt;button
-                        style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
-                        onMouseOver={this.setHoverTrue}
-                        onMouseOut={this.setHoverFalse}
-                        onClick={this.handleLoremIpsumClick}
-                        &gt;Get Lorem Ipsum!&lt;/button&gt;
+                    style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
+                    onMouseOver={this.setHoverTrue}
+                    onMouseOut={this.setHoverFalse}
+                    onClick={this.handleLoremIpsumClick}
+                &gt;Get Lorem Ipsum!&lt;/button&gt;
             &lt;/div&gt;
         );
     }
@@ -200,8 +185,8 @@ var MarkdownPreview = React.createClass({
     displayName : 'MarkdownPreview',
     
     mixins: [
-    FluxMixin,
-    Fluxxor.StoreWatchMixin('DocumentStore')
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
     ],
     
     styles: {
@@ -222,23 +207,27 @@ var MarkdownPreview = React.createClass({
             minHeight: '500px'
         }
     },
-...</code></pre>
+    ...</code></pre>
         <p>And once again we will apply the styles to the component's render method.</p>
-        <pre><code>...
+        <pre><code>    ...
     render: function() {
         var div;
         if (this.state.document.text) {
-            div = (&lt;div
-                id='mdPreview'
-                style={this.styles.mdPreview}
-                dangerouslySetInnerHTML={{__html: marked(this.state.document.text, {sanitize: true})}}
-            /&gt;);
-        } else {
-            div = (&lt;div
+            div = (
+                &lt;div
                     id='mdPreview'
                     style={this.styles.mdPreview}
-                    /&gt;);
-            }
+                    dangerouslySetInnerHTML={{__html: marked(this.state.document.text, {sanitize: true})}}
+                /&gt;
+            );
+        } else {
+            div = (
+                &lt;div
+                    id='mdPreview'
+                    style={this.styles.mdPreview}
+                /&gt;
+            );
+        }
 
         return (
             &lt;div style={this.styles.container}&gt;
