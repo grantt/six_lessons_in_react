@@ -431,8 +431,8 @@ var Application = React.createClass({
     render: function() {
         return (
             React.createElement("div", null, 
-                React.createElement(Sidebar, null), 
-                React.createElement(MarkdownViewer, null)
+                React.createElement(Sidebar, {flux: flux}), 
+                React.createElement(MarkdownViewer, {flux: flux})
             )
         )
     }

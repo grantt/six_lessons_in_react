@@ -14,8 +14,7 @@
     displayName : 'Sidebar',
 
     mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentStore')
+        FluxMixin
     ],
 
     styles: {
@@ -49,32 +48,53 @@
     },
 
     render: function() {
-    return (
-    &lt;div style={this.styles.container}&gt;
-        &lt;ul style={this.styles.ul}&gt;
-            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
-            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-clipboard"/&gt;Copy Content&lt;/li&gt;
-            &lt;li style={this.styles.li} &gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
-        &lt;/ul&gt;
-    &lt;/div&gt;
-    );
+        return (
+            &lt;div style={this.styles.container}&gt;
+                &lt;ul style={this.styles.ul}&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        );
     }
 });</code></pre>
         <p>We've hooked this component up to Fluxxor and it is listenting to the <code>DocumentStore</code> for it's state. We've also applied some styling to the elements we want to render in the same manner as the previous lesson.</p>
-        <p>Now let's add the actions one by one starting with clearing the content. For this action we will assign a <code>handleClear</code> callback to the <code>onClick</code> event handler, fire a Flux action from that callback, and propogate it through the dispatcher to the store to update the component state.</p>
+        <p>We now need to make sure we render the sidebar alongside our <code>MarkdownViewer</code>. Let's do that by wrapping both the <code>Sidebar</code> and <code>MarkdownViewer</code> components in a new <code>Application</code> component.
+
+        <pre><code>var Application = React.createClass({
+    displayName : 'Application',
+    
+    mixins: [
+        FluxMixin
+    ],
+
+    render: function() {
+        return (
+            &lt;div&lt;
+                &lt;Sidebar flux={flux} /&lt;
+                &lt;MarkdownViewer flux={flux} /&lt;
+            &lt;/div&lt;
+        )
+    }
+});</code></pre>
+
+    <p>Now we need to render the new <code>Application</code> component in <code>React.render</code> instead of the <code>MarkdownViewer</code>.</p>
+
+    <pre><code>React.render(
+    &lt;Application flux={flux} /&gt;,
+    document.getElementById('container')
+);</code></pre>
+
+        <p>At the moment, though, this sidebar doesn't do anything. So now let's add the actions one by one starting with clearing the content. For this action we will assign a <code>handleClear</code> callback to the <code>onClick</code> event handler, fire a Flux action from that callback, and propogate it through the dispatcher to the store to update the component state.</p>
         <pre><code>// Action constants
-            var constants = {
+var constants = {
     CLEAR_INPUT: 'CLEAR_INPUT',
     ...
 };
 
 var actions = {
     ...
-
     clearInput: function() {
-    this.dispatch(constants.CLEAR_INPUT);
+        this.dispatch(constants.CLEAR_INPUT);
     },
-
     ...
 };
 
@@ -100,69 +120,29 @@ var DocumentStore = Fluxxor.createStore({
 
         this.emit('change');
     },
-
-    getState: function() {
-        return {
-            document: this.document
-        };
-    }
+    ...
 });
 ...
 var Sidebar = React.createClass({
-    displayName : 'Sidebar',
-
-    mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentStore')
-    ],
-
+    ...
     handleClear: function() {
         var flux = this.getFlux();
         flux.actions.clearInput();
     },
 
-    styles: {
-        container: {
-            WebkitBoxSizing: 'border-box',
-            MozBoxSizing: 'border-box',
-            boxSizing: 'border-box',
-            float: 'left',
-            width: '12%',
-            backgroundColor: '#424242',
-            color: '#e9e9e9'
-        },
-        ul: {
-            padding: '0px 5px',
-            marginTop: '0px',
-            marginBottom: '0px'
-        },
-        li: {
-            paddingTop: '2px',
-            paddingBottom: '2px',
-            cursor: 'pointer'
-        },
-        i: {
-            width: '25px'
-        }
-    },
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('DocumentStore').getState();
-    },
-
     render: function() {
         return (
             &lt;div style={this.styles.container}&gt;
-            &lt;ul style={this.styles.ul}&gt;
-                &lt;li style={this.styles.li}  onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
-            &lt;/ul&gt;
+                &lt;ul style={this.styles.ul}&gt;
+                    &lt;li style={this.styles.li}  onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
+                &lt;/ul&gt;
             &lt;/div&gt;
         );
     }
 });</code></pre>
         <p>Next we will allow for renaming the document by intoducing a new list element as a button, hooking it up to an <code>onClick</code> handler, then dispatching an action. Let's modify the render method to show the new list element and build the callback.</p>
-        <pre><code>...
+        <pre><code>var Sidebar = React.createClass({
+    ...
     handleRename: function() {
         var flux = this.getFlux();
         flux.actions.editDocumentTitle();
@@ -183,163 +163,17 @@ var Sidebar = React.createClass({
         <p>This change also needs to be recognized by the actions and dispatcher so we will update them as well.</p>
         <pre><code>// Action constants
 var constants = {
-    CLEAR_INPUT: 'CLEAR_INPUT',
-    GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
-    GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
-    GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
-    UPDATE_PREVIEW: 'UPDATE_PREVIEW',
-    CREATE_DOCUMENT: 'CREATE_DOCUMENT',
-    DELETE_DOCUMENT: 'DELETE_DOCUMENT',
-    EDIT_DOCUMENT_TITLE: 'EDIT_DOCUMENT_TITLE'
-};
-
-var actions = {
-    generateLoremIpsum: function(currentMarkdownEditor) {
-        // we should still dispatch the original action, in case any stores
-        // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownEditor);
-
-        var that = this;
-        $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
-            if (statusText === 'success') {
-                that.dispatch(constants.GENERATE_LOREM_IPSUM_SUCCESS, data);
-            } else {
-                that.dispatch(constants.GENERATE_LOREM_IPSUM_ERROR);
-            }
-        });
-    },
-    updatePreview: function(currentMarkdownEditor) {
-        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownEditor);
-    },
-
-    clearInput: function() {
-        this.dispatch(constants.CLEAR_INPUT);
-    },
-
-    editDocumentTitle: function(title) {
-        this.dispatch(constants.EDIT_DOCUMENT_TITLE, title);
-    }
-};
-...
-// Stores
-var DocumentStore = Fluxxor.createStore({
-    mixins: [
-        FluxMixin
-    ],
-
-    initialize: function() {
-        this.document = {
-            'text': '',
-            'title': 'Untitled'
-        };
-        this.isEditActive = false;
-
-        this.bindActions(
-            constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
-            constants.CLEAR_INPUT, this.onClearInput,
-            constants.UPDATE_PREVIEW, this.onUpdatePreview
-            );
-            },
-
-        onEditDocumentTitle: function() {
-            this.isEditActive = true;
-
-        this.emit('change');
-    },
     ...
-    getState: function() {
-    return {
-            document: this.document,
-            isEditActive: this.isEditActive
-        };
-    }
-});
-...</code></pre>
-        <p>Now that the action is created and is hooked up to the state by changing <code>isEditActive</code>, we can augment the editor to listen to the store and rerender itself with a text area instead of the title.</p>
-        <pre><code>// Markdown editor Subcomponent
-    var MarkdownEditor = React.createClass({
-        displayName : 'MarkdownEditor',
-        ...
-        render: function() {
-        var header;
-        if (this.state.isEditActive === true) {
-        header = (&lt;input
-                type='text'
-                defaultValue={this.state.document.title}
-                style={this.styles.titleEdit}
-                autoFocus='true'
-                /&gt;);
-        } else {
-        header = &lt;h2&gt;{this.state.document.title} Editor&lt;/h2&gt;;
-        }
-
-        return (
-        &lt;div style={this.styles.container}&gt;
-            {header}
-            &lt;textarea
-                    style={this.styles.textarea}
-                    value={this.state.document.text}
-                    onChange={this.handleOnChange}
-                    onKeyUp={this.handleOnKeyUp}
-                    /&gt;
-            &lt;br /&gt;
-            &lt;button
-                    style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
-                    onMouseOver={this.setHoverTrue}
-                    onMouseOut={this.setHoverFalse}
-                    onClick={this.handleLoremIpsumClick}
-                    &gt;Get Lorem Ipsum!&lt;/button&gt;
-        &lt;/div&gt;
-        );
-    }
-});</code></pre>
-        <p>In order to save the results of the title change, lets introduce anv <code>onBlur</code> handler as well as an <code>onKeyDown</code> handler that is conditional upon the enter key being pressed and dispatches a <code>SAVE_DOCUMENT_TITLE</code>.</p>
-                <pre><code>// Action constants
-var constants = {
-    CLEAR_INPUT: 'CLEAR_INPUT',
-    GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
-    GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
-    GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS',
-    UPDATE_PREVIEW: 'UPDATE_PREVIEW',
-    CREATE_DOCUMENT: 'CREATE_DOCUMENT',
-    DELETE_DOCUMENT: 'DELETE_DOCUMENT',
-    EDIT_DOCUMENT_TITLE: 'EDIT_DOCUMENT_TITLE',
-    SAVE_DOCUMENT_TITLE: 'SAVE_DOCUMENT_TITLE'
+    EDIT_DOCUMENT_TITLE: 'EDIT_DOCUMENT_TITLE'
+    ...
 };
 
 var actions = {
-    generateLoremIpsum: function(currentMarkdownEditor) {
-        // we should still dispatch the original action, in case any stores
-        // are listening for the first event, that kicks off the API call
-        this.dispatch(constants.GENERATE_LOREM_IPSUM, currentMarkdownEditor);
-
-        var that = this;
-        $.get('http://baconipsum.com/api/?type=all-meat&paras=2&start-with-lorem=1', function(data, statusText) {
-            if (statusText === 'success') {
-                that.dispatch(constants.GENERATE_LOREM_IPSUM_SUCCESS, data);
-            } else {
-                that.dispatch(constants.GENERATE_LOREM_IPSUM_ERROR);
-            }
-        });
-    },
-    updatePreview: function(currentMarkdownEditor) {
-        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownEditor);
-    },
-
-    clearInput: function() {
-        this.dispatch(constants.CLEAR_INPUT);
-    },
-
+    ...
     editDocumentTitle: function(title) {
         this.dispatch(constants.EDIT_DOCUMENT_TITLE, title);
-    },
-
-    saveDocumentTitle: function(title) {
-        this.dispatch(constants.SAVE_DOCUMENT_TITLE, title);
     }
+    ...
 };
 ...
 // Stores
@@ -356,13 +190,9 @@ var DocumentStore = Fluxxor.createStore({
         this.isEditActive = false;
 
         this.bindActions(
+            ...
             constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
-            constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
-            constants.CLEAR_INPUT, this.onClearInput,
-            constants.UPDATE_PREVIEW, this.onUpdatePreview
+            ...
         );
     },
 
@@ -371,51 +201,98 @@ var DocumentStore = Fluxxor.createStore({
 
         this.emit('change');
     },
-
-    onSaveDocumentTitle: function(title) {
-        this.isEditActive = false;
-        this.document.title = title;
-
-        this.emit('change');
-    },
-
-    handleLoremIpsum:function() {
-        console.log('Generating lorem ipsum from the store....');
-    },
-
-    handleLoremIpsumError: function() {
-        console.error('There was an error generating lorem ipsum...');
-    },
-
-    handleLoremIpsumSuccess: function(loremIpsum) {
-        this.document.text += loremIpsum;
-
-        this.emit('change');
-    },
-
-    onUpdatePreview: function(payload) {
-        this.document.text = payload;
-
-        this.emit('change');
-    },
-
-    onClearInput: function() {
-        this.document.text = '';
-
-        this.emit('change');
-    },
-
+    ...
     getState: function() {
         return {
             document: this.document,
             isEditActive: this.isEditActive
         };
     }
-});
+});</code></pre>
+        <p>Now that the action is created and is hooked up to the state by changing <code>isEditActive</code>, we can augment the editor to listen to the store and rerender itself with a text area instead of the title.</p>
+        <pre><code>// Markdown editor Subcomponent
+var MarkdownEditor = React.createClass({
+    ...
+    render: function() {
+        var header;
+        if (this.state.isEditActive === true) {
+            header = (&lt;input
+                    type='text'
+                    defaultValue={this.state.document.title}
+                    style={this.styles.titleEdit}
+                    autoFocus='true'
+                    /&gt;);
+        } else {
+            header = &lt;h2&gt;{this.state.document.title} Editor&lt;/h2&gt;;
+        }
+
+        return (
+            &lt;div style={this.styles.container}&gt;
+                {header}
+                &lt;textarea
+                    style={this.styles.textarea}
+                    value={this.state.document.text}
+                    onChange={this.handleOnChange}
+                    onKeyUp={this.handleOnKeyUp}
+                /&gt;
+                &lt;br /&gt;
+                &lt;button
+                    style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
+                    onMouseOver={this.setHoverTrue}
+                    onMouseOut={this.setHoverFalse}
+                    onClick={this.handleLoremIpsumClick}
+                &gt;Get Lorem Ipsum!&lt;/button&gt;
+            &lt;/div&gt;
+        );
+    }
+});</code></pre>
+        <p>In order to save the results of the title change, lets introduce an <code>onBlur</code> handler as well as an <code>onKeyDown</code> handler that is conditional upon the enter key being pressed and dispatches a <code>SAVE_DOCUMENT_TITLE</code>.</p>
+                <pre><code>// Action constants
+var constants = {
+    ...
+    SAVE_DOCUMENT_TITLE: 'SAVE_DOCUMENT_TITLE',
+    ...
+};
+
+var actions = {
+    ...
+    saveDocumentTitle: function(title) {
+        this.dispatch(constants.SAVE_DOCUMENT_TITLE, title);
+    },
+    ...
+};
 ...
+// Stores
+var DocumentStore = Fluxxor.createStore({
+    mixins: [
+        FluxMixin
+    ],
+
+    initialize: function() {
+        this.document = {
+            'text': '',
+            'title': 'Untitled'
+        };
+        this.isEditActive = false;
+
+        this.bindActions(
+            ...
+            constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
+            ...
+        );
+    },
+    ...
+    onSaveDocumentTitle: function(title) {
+        this.isEditActive = false;
+        this.document.title = title;
+
+        this.emit('change');
+    },
+    ...
+});
+
 // Markdown editor Subcomponent
 var MarkdownEditor = React.createClass({
-    displayName : 'MarkdownEditor',
     ...
     handleTitleEditorKeyDown: function(event) {
         if (event.keyCode == 13 ) {
@@ -465,7 +342,7 @@ var MarkdownEditor = React.createClass({
 });</code></pre>
         <p>Now we can style the new components as we wish and our new actions are properly hooked up to all the relevant components.</p>
         <h2>Exercise</h2>
-        <p>Using the lesson above, add a sidebar subcomponent to the application that can rename the document and clear it's content.</p>
+        <p>Using the lesson above, add a sidebar subcomponent to the application that can rename the document and clear its content.</p>
         <br />
         <a href="../lesson_5/exercise.html">Exercise</a>
         <br />
