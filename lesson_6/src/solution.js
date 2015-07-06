@@ -541,7 +541,7 @@ var MarkdownPreview = React.createClass({
         return (
             <div style={this.styles.container}>
                 <h2>{this.state.activeDocument.title} Preview</h2>
-            {div}
+                {div}
             </div>
         )
     }
@@ -574,9 +574,7 @@ var MarkdownViewer = React.createClass({
                 </div>
             )
         } else {
-            return (
-                <div></div>
-            )
+            return null;
         }
 
     }

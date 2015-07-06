@@ -264,8 +264,8 @@ var DocumentTab = React.createClass({
         selectedLi: _.extend({}, styles.li, {
             background: '#666666',
             color: '#f0f0f0'
-            })
-        },
+        })
+    },
 
     handleSelect: function() {
         var flux = this.getFlux();
@@ -419,22 +419,51 @@ var Application = React.createClass({
     },
 
     render: function() {
-        var deleteLi;
+        var deleteLi = null;
         if (this.state.documents.length &gt; 0) {
             deleteLi = &lt;li style={this.styles.li} onClick={this.handleDelete}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-trash-o"/&gt;Delete&lt;/li&gt;;
         }
         return (
             &lt;div style={this.styles.container}&gt;
-            &lt;ul style={this.styles.ul}&gt;
-            &lt;li style={this.styles.li} onClick={this.handleRename}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
-            &lt;li style={this.styles.li} onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
-            {deleteLi}
-            &lt;/ul&gt;
+                &lt;ul style={this.styles.ul}&gt;
+                    &lt;li style={this.styles.li} onClick={this.handleRename}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-pencil"/&gt;Rename Document&lt;/li&gt;
+                    &lt;li style={this.styles.li} onClick={this.handleClear}&gt;&lt;i style={this.styles.i} className="fa-lg fa fa-eraser"/&gt;Clear&lt;/li&gt;
+                    {deleteLi}
+                &lt;/ul&gt;
             &lt;/div&gt;
         );
     }
 });</code></pre>
         <p>Notice that we've added a check for the length of <code>this.state.documents</code> to conditionally show the delete button. This means we must include the <code>StoreWatchMixin</code> and the <code>getStateFromFlux</code> method on this component since we access the state and must be informed of changes to our <code>DocumentsStore</code>.</p>
+
+        <p>Now let's do something similar in <code>MarkdownViewer</code> so that the application doesn't error if we delete all markdown documents.</p>
+
+        <pre><code>var MarkdownViewer = React.createClass({
+    ...
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentsStore')
+    ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentsStore').getState();
+    },
+
+    render: function() {
+        if (this.state.documents.length > 0) {
+            return (
+                &lt;div&gt;
+                    &lt;MarkdownEditor flux={flux} /&gt;
+                    &lt;MarkdownPreview flux={flux} /&gt;
+                &lt;/div&gt;
+            )
+        } else {
+            return null;
+        }
+    }
+});</code></pre>
+
         <h2>Exercise</h2>
         <p>Using the lesson above, extend the data store to handle multiple documents and add a navigation bar to control the selected document.</p>
         <br />
