@@ -101,8 +101,8 @@ var MarkdownEditor = React.createClass({
     displayName : 'MarkdownEditor',
     ...
     getStateFromFlux: function() {
-    var flux = this.getFlux();
-    return flux.store('DocumentsStore').getState();
+        var flux = this.getFlux();
+        return flux.store('DocumentsStore').getState();
     },
     ...
     // we need an onChange handler since React textarea elements
@@ -187,8 +187,8 @@ var MarkdownPreview = React.createClass({
 
         return (
             &lt;div style={this.styles.container}&gt;
-            &lt;h2&gt;{this.state.activeDocument.title} Preview&lt;/h2&gt;
-            {div}
+                &lt;h2&gt;{this.state.activeDocument.title} Preview&lt;/h2&gt;
+                {div}
             &lt;/div&gt;
         )
     }
