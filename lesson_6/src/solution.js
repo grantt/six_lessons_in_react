@@ -552,8 +552,14 @@ var MarkdownViewer = React.createClass({
     displayName : 'MarkdownViewer',
 
     mixins: [
-        FluxMixin
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentsStore')
     ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentsStore').getState();
+    },
 
     render: function() {
         if (this.state.documents.length > 0) {
