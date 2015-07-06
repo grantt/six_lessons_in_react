@@ -422,13 +422,13 @@ var MarkdownEditor = React.createClass({
     // text area editable for users
     handleOnChange: function(event) {
         var flux = this.getFlux();
-        var state = _.extend(this.state.document, {text: event.target.value});
+        var state = _.extend(this.state.activeDocument, {text: event.target.value});
         this.setState(
             {
                 document: state
             }
         );
-        flux.actions.updatePreview(this.state.document.text);
+        flux.actions.updatePreview(this.state.activeDocument.text);
     },
 
     setHoverTrue: function() {
