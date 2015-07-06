@@ -68,10 +68,10 @@
 
     render: function() {
         return (
-            &lt;div&lt;
-                &lt;Sidebar flux={flux} /&lt;
-                &lt;MarkdownViewer flux={flux} /&lt;
-            &lt;/div&lt;
+            &lt;div&gt;
+                &lt;Sidebar flux={flux} /&gt;
+                &lt;MarkdownViewer flux={flux} /&gt;
+            &lt;/div&gt;
         )
     }
 });</code></pre>
@@ -217,11 +217,11 @@ var MarkdownEditor = React.createClass({
         var header;
         if (this.state.isEditActive === true) {
             header = (&lt;input
-                    type='text'
-                    defaultValue={this.state.document.title}
-                    style={this.styles.titleEdit}
-                    autoFocus='true'
-                    /&gt;);
+                type='text'
+                defaultValue={this.state.document.title}
+                style={this.styles.titleEdit}
+                autoFocus='true'
+            /&gt;);
         } else {
             header = &lt;h2&gt;{this.state.document.title} Editor&lt;/h2&gt;;
         }
@@ -322,20 +322,20 @@ var MarkdownEditor = React.createClass({
 
         return (
             &lt;div style={this.styles.container}&gt;
-            {header}
-            &lt;textarea
-                style={this.styles.textarea}
-                value={this.state.document.text}
-                onChange={this.handleOnChange}
-                onKeyUp={this.handleOnKeyUp}
-            /&gt;
-            &lt;br /&gt;
-            &lt;button
-                style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
-                onMouseOver={this.setHoverTrue}
-                onMouseOut={this.setHoverFalse}
-                onClick={this.handleLoremIpsumClick}
-            &gt;Get Lorem Ipsum!&lt;/button&gt;
+                {header}
+                &lt;textarea
+                    style={this.styles.textarea}
+                    value={this.state.document.text}
+                    onChange={this.handleOnChange}
+                    onKeyUp={this.handleOnKeyUp}
+                /&gt;
+                &lt;br /&gt;
+                &lt;button
+                    style={this.state.buttonHover ? _.extend({}, styles.button, styles.buttonHover) : styles.button}
+                    onMouseOver={this.setHoverTrue}
+                    onMouseOut={this.setHoverFalse}
+                    onClick={this.handleLoremIpsumClick}
+                &gt;Get Lorem Ipsum!&lt;/button&gt;
             &lt;/div&gt;
         );
     }
