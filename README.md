@@ -40,9 +40,10 @@ For these lessons, I am assuming the user has a novice or greater understanding 
 Set-up an environment:
 
 1. `npm install`
-  * reads dependencies from `package.json` and installs them
-2. `gulp`
-  * starts a web server and watches source folders for changes
+  * Reads dependencies from `package.json` and installs them.
+2. `./node_modules/.bin/gulp`
+  * Starts a web server and watches source folders for changes. When any files are changed, build files will be rebuilt and your browser will automatically refresh.
+3. You might also want to install [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
 
 ## Lesson 1 - Basics
 Introduce basic React components by building a "Hello World" component that has a render method returning JSX. Next we introduce the concept of component properties, default properties, as well as how to render a component in the DOM. Finally, component state and event handlers are introduced.
