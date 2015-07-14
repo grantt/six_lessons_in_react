@@ -1,8 +1,22 @@
 # Six Lessons in React
 Six lesson collaborative learning course in React JS
 
+- [Prerequisites](https://github.com/grantt/six_lessons_in_react/tree/master/README.md#prerequisites)
+- [Getting Started](https://github.com/grantt/six_lessons_in_react/tree/master/README.md#getting-started)
+- [Syllabus](https://github.com/grantt/six_lessons_in_react/tree/master/README.md#syllabus)
+
 # Prerequisites
 For these lessons, I am assuming the user has a novice or greater understanding of HTML, Javascript, CSS, browser rendering, and the request-response process.
+
+# Getting Started
+
+1. `npm install`
+  * Reads dependencies from `package.json` and installs them.
+2. `./node_modules/.bin/gulp`
+  * Starts a web server and watches source folders for changes. When any files are changed, build files will be rebuilt and your browser will automatically refresh.
+  * This will also load the first lesson of the React introductory class.
+3. You might also want to install [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
+4. Go to [localhost:3000/lesson_1/lesson.html](http://localhost:3000/lesson_1/lesson.html).
 
 # Syllabus
 
@@ -37,7 +51,6 @@ For these lessons, I am assuming the user has a novice or greater understanding 
   * Actions
 
 ### Exercises
-Set-up an environment
 
 ## Lesson 1 - Basics
 Introduce basic React components by building a "Hello World" component that has a render method returning JSX. Next we introduce the concept of component properties, default properties, as well as how to render a component in the DOM. Finally, component state and event handlers are introduced.
