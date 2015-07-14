@@ -100,7 +100,7 @@ var MarkdownEditor = React.createClass({
         return (
             <div>
                 <textarea
-                    rows={ this.props.textareaRows }
+                    rows={ this.props.textAreaRows }
                     cols={ this.props.textAreaCols }
                     value={this.state.document.text}
                     onChange={this.handleOnChange}
@@ -126,7 +126,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 React.render(
     <MarkdownEditor
         flux={flux}
-        textareaRows="10"
+        textAreaRows="10"
         textAreaCols="50"
     />,
     document.getElementById('container')

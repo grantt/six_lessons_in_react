@@ -11,69 +11,91 @@
         <p>Next we will extend our nascent Markdown preview generator to actually preview the text entered into our first component. This means that the textarea component will need to pass data to the display component.</p>
         <p>The preview component is relatively simple, it just needs to listen for any changes in the <code>DocumentStore</code> and render the compiled markup as HTML. In order to properly listen to the store, we once again add <code>FluxMixin</code> and <code>Fluxxor.StoreWatchMixin</code> while adding a <code>getStateFromFlux</code> method. </p>
         <pre><code>var MarkdownPreview = React.createClass({
-  mixins: [
-    FluxMixin,
-    Fluxxor.StoreWatchMixin('DocumentStore')
-  ],
-  getStateFromFlux: function() {
-    var flux = this.getFlux();
-    return flux.store('DocumentStore').getState();
-  },
-  render: function() {
-    return ()
-  }
+    mixins: [
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentStore')
+    ],
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentStore').getState();
+    },
+    render: function() {
+        return ()
+    }
 });</code></pre>
         <p>Meanwhile, we need to register a corresponding action with the dispatcher and have the <code>DocumentStore</code> to set the value of <code>markdownInput</code> via an <code>updatePreview</code> method and emit a change event.</p>
         <pre><code>var constants = {
-  // Previous code here
-  UPDATE_PREVIEW: "UPDATE_PREVIEW"
+    ...
+    UPDATE_PREVIEW: "UPDATE_PREVIEW"
+    ...
 };
 
 var actions = {
-  // Previous code here
-  updatePreview: function(currentMarkdownInput) {
-    this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
-  }
+    ...
+    updatePreview: function(currentMarkdownInput) {
+        this.dispatch(constants.UPDATE_PREVIEW, currentMarkdownInput);
+    }
+    ...
 };
 
 var DocumentStore = Fluxxor.createStore({
-  // Previous code here
-  updatePreview: function(currentInput) {
-    // tells whatever views are listening that the data has changed
-    this.markdownInput = currentInput;
-    this.emit('change');
-  },
-  // Previous code here
+    ...
+    initialize: function() {
+        this.document = {
+            'text': ''
+        };
+        this.bindActions(
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
+            constants.UPDATE_PREVIEW, this.onUpdatePreview
+        );
+    },
+
+    onUpdatePreview: function(currentInput) {
+        // tells whatever views are listening that the data has changed
+        this.document.text = payload;
+        this.emit('change');
+    },
+    ...
 });</code></pre>
         <p>In order to render the HTML itself, we need to utilize <code>dangerouslySetInnerHTML</code>. That prop is intended to sound scary due to the inherent vulnerabilities in security and issues with sanitizing input. For our tutorial it is a necessary risk and we feel it is an important facet of React to understand. Since React treats HTML in any state or prop as a string to avoid XSS attacks on rendering, <code>dangerouslySetInnerHTML</code> allows us to render HTML by passing it an object, keyed on <code>__html</code> with the value of our HTML string. In order to compile the markdown, we have included a helpful node module named <a href="https://github.com/chjj/marked" target="_blank">marked</a>. This allows us the ability to quickly compile the markdown in a sanitary way and pass it to <code>dangerouslySetInnerHTML</code>.</p>
         <pre><code>var MarkdownPreview = React.createClass({
-  // Previous code here
-  render: function() {
-    return (
-      &lt;div dangerouslySetInnerHTML={{__html: marked(this.state.markdownInput, {sanitize: true})}} /&gt;
-    )
-  }
+    ...
+    render: function() {
+        return (
+            &lt;div dangerouslySetInnerHTML={{__html: marked(this.state.document.text, {sanitize: true})}} /&gt;
+        );
+    }
+});</code></pre>
+    <p>We will also need to handle the typed input to the <code>MarkdownEditor</code> by instructing <code>handleOnChange</code> to trigger the <code>updatePreview</code> action with the value of the textarea.</p>
+    <pre><code>var MarkdownEditor = React.createClass({
+    ...
+    handleOnChange: function(event) {
+        var flux = this.getFlux();
+        var state = _.extend(this.state.document, {text: event.target.value});
+        this.setState({ document: state });
+        flux.actions.updatePreview(this.state.document.text);
+    },
+    ...
 });</code></pre>
     <p>Now that we have multiple components, let's build a simple wrapper to handle the initial render and layout of the editor and preview components. This wrapper will simply arrange our components and allow us to call <code>React.render</code> with a single component rendering into the container and its child components rendering on cascade.</p>
-    <pre><code>var MarkdownEditor = React.createClass({
-  render: function() {
-    return (
-      &lt;div&gt;
-        &lt;MarkdownInput
-          flux={flux}
-          textareaRows="10"
-          textAreaCols="50"
-        /&gt;
-        &lt;MarkdownPreview
-          flux={flux}
-        /&gt;
-      &lt;/div&gt;
-    )
-  }
+    <pre><code>var MarkdownViewer = React.createClass({
+    render: function() {
+        return (
+            &lt;div&gt;
+                &lt;MarkdownEditor
+                    flux={flux}
+                    textAreaRows="10"
+                    textAreaCols="50"
+                /&gt;
+                &lt;MarkdownPreview flux={flux} /&gt;
+            &lt;/div&gt;
+        );
+    }
 });</code></pre>
     <h2>Exercise</h2>
     <p>Using the lesson above and the Further Reading section, add a preview component capable of rendering the Markdown in the original textarea component.</p>
-    <br />
     <a href="../lesson_3/exercise.html">Exercise</a>
     <br />
     <a href="../lesson_3/solution.html">Solution</a>

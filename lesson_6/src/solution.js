@@ -105,9 +105,9 @@ var DocumentsStore = Fluxxor.createStore({
             constants.DELETE_DOCUMENT, this.onDeleteDocument,
             constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
             constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
             constants.CLEAR_INPUT, this.onClearInput,
             constants.UPDATE_PREVIEW, this.onUpdatePreview,
             constants.SELECT_DOCUMENT, this.onSelectDocument
@@ -163,15 +163,15 @@ var DocumentsStore = Fluxxor.createStore({
         this.emit('change');
     },
 
-    generateLoremIpsum:function() {
+    handleLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
-    generateLoremIpsumError: function() {
+    handleLoremIpsumError: function() {
         console.error('There was an error generating lorem ipsum...');
     },
 
-    generateLoremIpsumSuccess: function(loremIpsum) {
+    handleLoremIpsumSuccess: function(loremIpsum) {
         this.activeDocument.text += loremIpsum;
 
         this.emit('change');
@@ -421,16 +421,13 @@ var MarkdownEditor = React.createClass({
     // the textarea would not be editable by users. this makes the
     // text area editable for users
     handleOnChange: function(event) {
+        var flux = this.getFlux();
         var state = _.extend(this.state.activeDocument, {text: event.target.value});
         this.setState(
             {
-                activeDocument: state
+                document: state
             }
         );
-    },
-
-    handleOnKeyUp: function() {
-        var flux = this.getFlux();
         flux.actions.updatePreview(this.state.activeDocument.text);
     },
 
@@ -480,7 +477,6 @@ var MarkdownEditor = React.createClass({
                     data={this.state.activeDocument.id}
                     value={this.state.activeDocument.text}
                     onChange={this.handleOnChange}
-                    onKeyUp={this.handleOnKeyUp}
                 />
                 <br />
                 <button
@@ -545,7 +541,7 @@ var MarkdownPreview = React.createClass({
         return (
             <div style={this.styles.container}>
                 <h2>{this.state.activeDocument.title} Preview</h2>
-            {div}
+                {div}
             </div>
         )
     }
@@ -571,8 +567,6 @@ var MarkdownViewer = React.createClass({
                 <div>
                     <MarkdownEditor
                         flux={flux}
-                        textareaRows="10"
-                        textAreaCols="50"
                     />
                     <MarkdownPreview
                         flux={flux}
@@ -580,14 +574,11 @@ var MarkdownViewer = React.createClass({
                 </div>
             )
         } else {
-            return (
-                <div></div>
-            )
+            return null;
         }
 
     }
 });
-
 
 // Application Controller View
 var Application = React.createClass({

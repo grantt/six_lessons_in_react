@@ -105,9 +105,9 @@ var DocumentsStore = Fluxxor.createStore({
             constants.DELETE_DOCUMENT, this.onDeleteDocument,
             constants.EDIT_DOCUMENT_TITLE, this.onEditDocumentTitle,
             constants.SAVE_DOCUMENT_TITLE, this.onSaveDocumentTitle,
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
             constants.CLEAR_INPUT, this.onClearInput,
             constants.UPDATE_PREVIEW, this.onUpdatePreview,
             constants.SELECT_DOCUMENT, this.onSelectDocument
@@ -163,15 +163,15 @@ var DocumentsStore = Fluxxor.createStore({
         this.emit('change');
     },
 
-    generateLoremIpsum:function() {
+    handleLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
-    generateLoremIpsumError: function() {
+    handleLoremIpsumError: function() {
         console.error('There was an error generating lorem ipsum...');
     },
 
-    generateLoremIpsumSuccess: function(loremIpsum) {
+    handleLoremIpsumSuccess: function(loremIpsum) {
         this.activeDocument.text += loremIpsum;
 
         this.emit('change');
@@ -421,17 +421,14 @@ var MarkdownEditor = React.createClass({
     // the textarea would not be editable by users. this makes the
     // text area editable for users
     handleOnChange: function(event) {
-        var state = _.extend(this.state.activeDocument, {text: event.target.value});
+        var flux = this.getFlux();
+        var state = _.extend(this.state.document, {text: event.target.value});
         this.setState(
             {
-                activeDocument: state
+                document: state
             }
         );
-    },
-
-    handleOnKeyUp: function() {
-        var flux = this.getFlux();
-        flux.actions.updatePreview(this.state.activeDocument.text);
+        flux.actions.updatePreview(this.state.document.text);
     },
 
     setHoverTrue: function() {
@@ -479,8 +476,7 @@ var MarkdownEditor = React.createClass({
                     style: this.styles.textarea, 
                     data: this.state.activeDocument.id, 
                     value: this.state.activeDocument.text, 
-                    onChange: this.handleOnChange, 
-                    onKeyUp: this.handleOnKeyUp}
+                    onChange: this.handleOnChange}
                 ), 
                 React.createElement("br", null), 
                 React.createElement("button", {
@@ -556,23 +552,15 @@ var MarkdownViewer = React.createClass({
     displayName : 'MarkdownViewer',
 
     mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentsStore')
+        FluxMixin
     ],
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('DocumentsStore').getState();
-    },
 
     render: function() {
         if (this.state.documents.length > 0) {
             return (
                 React.createElement("div", null, 
                     React.createElement(MarkdownEditor, {
-                        flux: flux, 
-                        textareaRows: "10", 
-                        textAreaCols: "50"}
+                        flux: flux}
                     ), 
                     React.createElement(MarkdownPreview, {
                         flux: flux}
@@ -587,7 +575,6 @@ var MarkdownViewer = React.createClass({
 
     }
 });
-
 
 // Application Controller View
 var Application = React.createClass({

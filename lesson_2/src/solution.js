@@ -37,21 +37,21 @@ var DocumentStore = Fluxxor.createStore({
         };
 
         this.bindActions(
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError
         );
     },
 
-    generateLoremIpsum:function() {
+    handleLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
-    generateLoremIpsumError: function() {
+    handleLoremIpsumError: function() {
         console.error('There was an error generating lorem ipsum...');
     },
 
-    generateLoremIpsumSuccess: function(loremIpsum) {
+    handleLoremIpsumSuccess: function(loremIpsum) {
         this.document.text += loremIpsum;
 
         this.emit('change');
@@ -100,7 +100,7 @@ var MarkdownEditor = React.createClass({
         return (
             <div>
                 <textarea
-                    rows={ this.props.textareaRows }
+                    rows={ this.props.textAreaRows }
                     cols={ this.props.textAreaCols }
                     value={this.state.document.text}
                     onChange={this.handleOnChange}
@@ -126,7 +126,7 @@ var flux = new Fluxxor.Flux(stores, actions);
 React.render(
     <MarkdownEditor
         flux={flux}
-        textareaRows="10"
+        textAreaRows="10"
         textAreaCols="50"
     />,
     document.getElementById('container')

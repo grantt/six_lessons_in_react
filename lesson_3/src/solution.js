@@ -41,22 +41,22 @@ var DocumentStore = Fluxxor.createStore({
         };
 
         this.bindActions(
-            constants.GENERATE_LOREM_IPSUM, this.generateLoremIpsum,
-            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.generateLoremIpsumSuccess,
-            constants.GENERATE_LOREM_IPSUM_ERROR, this.generateLoremIpsumError,
+            constants.GENERATE_LOREM_IPSUM, this.handleLoremIpsum,
+            constants.GENERATE_LOREM_IPSUM_SUCCESS, this.handleLoremIpsumSuccess,
+            constants.GENERATE_LOREM_IPSUM_ERROR, this.handleLoremIpsumError,
             constants.UPDATE_PREVIEW, this.onUpdatePreview
         );
     },
 
-    generateLoremIpsum:function() {
+    handleLoremIpsum:function() {
         console.log('Generating lorem ipsum from the store....');
     },
 
-    generateLoremIpsumError: function() {
+    handleLoremIpsumError: function() {
         console.error('There was an error generating lorem ipsum...');
     },
 
-    generateLoremIpsumSuccess: function(loremIpsum) {
+    handleLoremIpsumSuccess: function(loremIpsum) {
         this.document.text += loremIpsum;
 
         this.emit('change');
@@ -64,6 +64,7 @@ var DocumentStore = Fluxxor.createStore({
 
     onUpdatePreview: function(payload) {
         this.document.text = payload;
+
 
         this.emit('change');
     },
@@ -99,16 +100,13 @@ var MarkdownEditor = React.createClass({
     // the textarea would not be editable by users. this makes the
     // text area editable for users
     handleOnChange: function(event) {
+        var flux = this.getFlux();
         var state = _.extend(this.state.document, {text: event.target.value});
         this.setState(
             {
                 document: state
             }
         );
-    },
-
-    handleOnKeyUp: function() {
-        var flux = this.getFlux();
         flux.actions.updatePreview(this.state.document.text);
     },
 
@@ -117,11 +115,10 @@ var MarkdownEditor = React.createClass({
             <div>
                 <h2>Editor</h2>
                 <textarea
-                    rows={ this.props.textareaRows }
+                    rows={ this.props.textAreaRows }
                     cols={ this.props.textAreaCols }
                     value={this.state.document.text}
                     onChange={this.handleOnChange}
-                    onKeyUp={this.handleOnKeyUp}
                 />
                 <br />
                 <button
@@ -173,21 +170,15 @@ var MarkdownViewer = React.createClass({
     displayName : 'MarkdownViewer',
 
     mixins: [
-        FluxMixin,
-        Fluxxor.StoreWatchMixin('DocumentStore')
+        FluxMixin
     ],
-
-    getStateFromFlux: function() {
-        var flux = this.getFlux();
-        return flux.store('DocumentStore').getState();
-    },
 
     render: function() {
         return (
             <div>
                 <MarkdownEditor
                     flux={flux}
-                    textareaRows="10"
+                    textAreaRows="10"
                     textAreaCols="50"
                 />
                 <MarkdownPreview
