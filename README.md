@@ -16,7 +16,7 @@ For these lessons, I am assuming the user has a novice or greater understanding 
   * Starts a web server and watches source folders for changes. When any files are changed, build files will be rebuilt and your browser will automatically refresh.
   * This will also load the first lesson of the React introductory class.
 3. You might also want to install [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi).
-4. Go to [localhost:3000/lesson_1/lesson.html](localhost:3000/lesson_1/lesson.html).
+4. Go to [localhost:3000/lesson_1/lesson.html](http://localhost:3000/lesson_1/lesson.html).
 
 # Syllabus
 
