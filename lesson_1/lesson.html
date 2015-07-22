@@ -19,7 +19,7 @@
             &lt;div&gt;
                 Content!
             &lt;/div&gt;
-        )
+        );
     }
 });</code></pre>
         <p>This method returns a tree of React components that can be rendered into the DOM by <code class="language-text" data-lang="javascript">React.render()</code>. The tree of components in this case is a single React <code class="language-javascript" data-lang="javascript">div</code> component rather than the action <code class="language-text" data-lang="javascript">&lt;div&gt;</code> DOM node. This means that instead of returning HTML itself we can return other complex React components and build a fully composable application.</p>
@@ -31,17 +31,16 @@
 );</code></pre>
         <p>SomeComponent would have its <code>render()</code> method called and the resulting tree of React components rendered and inserted into the DOM replacing the contents of <code>&lt;div id="container"&gt;&lt;/div&gt;</code>.</p>
         <h2>Component Properties</h2>
-        <p>We can pass data into a component by attributes defined when the component is instantiated. This data, called component properties, is then accessible throughout the component via <code>this.props</code>. Properties are analagous to configuration or options of a component. They should be considered immutable and not change over the lifecycle of the component. In JSX syntax such as that returned by the <code>render()</code> method, these properties, or any Javascript expression, can be accessed with curly brackets. For example, here is a simple rendering of two header tags receiving data and then displaying it from <code>this.props</code>.</p>
+        <p>We can pass data into a component by attributes defined when the component is instantiated. This data, called component properties, is then accessible throughout the component via <code>this.props</code>. Properties are analagous to configuration or options to a component. They should be considered immutable and not change over the lifecycle of the component. In JSX syntax (such as that returned by the <code>render()</code> method), these properties, or any Javascript expression, can be accessed with curly brackets. For example, here is a simple rendering of two header tags receiving data and then displaying it from <code>this.props</code>.</p>
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
     render: function () {
+        var paragraph = 'Component paragraph';
+
         return (
-            &lt;h1&gt;
-                {this.props.title}
-            &lt;/h1&gt;
-            &lt;h2&gt;
-                {this.props.subtitle}
-            &lt;/h2&gt;
-        )
+            &lt;h1&gt;{this.props.title}&lt;/h1&gt;
+            &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
+            &lt;p&gt;{paragraph}&lt;&gt;
+        );
     }
 });
 
@@ -56,18 +55,14 @@ React.render(
         return {
             title: 'A Title',
             subtitle: 'Just a Subtitle'
-        }
+        };
     },
 
     render: function () {
         return (
-            &lt;h1&gt;
-                {this.props.title}
-            &lt;/h1&gt;
-            &lt;h2&gt;
-                {this.props.subtitle}
-            &lt;/h2&gt;
-        )
+            &lt;h1&gt;{this.props.title}&lt;/h1&gt;
+            &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
+        );
     }
 });
 
@@ -77,13 +72,13 @@ React.render(
 );</code></pre>
         <p>This function is invoked a single time and cached when the class is created and will be overwritten by any property passed into the component.</p>
         <h2>Component State</h2>
-        <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic data, that affects the rendering of the component. State is set only from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
+        <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic data, that affects the rendering of the component. State can only be set from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
     getDefaultProps: function() {
         return {
             title: 'A Title',
             subtitle: 'Just a Subtitle'
-        }
+        };
     },
 
     handleClick: function() {
@@ -98,7 +93,7 @@ React.render(
                 &lt;h1&gt;{this.props.title}&lt;/h1&gt;
                 &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
             &lt;/div&gt;
-        )
+        );
     }
 });</code></pre>
         <h2>Initial State of a Component</h2>
@@ -108,13 +103,11 @@ React.render(
         return {
             title: 'A Title',
             subtitle: 'Just a Subtitle'
-        }
+        };
     },
 
     getInitialState: function() {
-        return {
-            likes: 0
-        }
+        return { likes: 0 };
     },
 
     handleClick: function() {
@@ -131,11 +124,11 @@ React.render(
                 &lt;span&gt;Likes: {this.state.likes}&lt;/span&gt;
                 &lt;button onClick={this.handleClick} type="button"&gt;Like this&lt;/button&gt;
             &lt;/div&gt;
-        )
+        );
     }
 });</code></pre>
         <h2>Triggering Rerendering</h2>
-        <p>Anytime state or properties of component change, a render update is triggered on the component, the result is passed to the Virtual DOM, diffed against the existing DOM, translated to DOM instructions and rendered on the page. Anything beyond a basic component will likely be stateful so it is important to remember the effects of state change on the layout.</p>
+        <p>Any time the state or properties of a component change, a render update is triggered on the component, the result is passed to the Virtual DOM, diffed against the existing DOM, translated to DOM instructions and rendered on the page. Anything beyond a basic component will likely be stateful so it is important to remember the effects of state change on the layout.</p>
         <h2>Exercise</h2>
         <p>Using the lesson above and the ReactJS documentation, build a simple Hello World component that can accept a name property, default properties for the name, an attribute on the component's state for 'likes' and a handler for updating the state.</p>
         <br />
