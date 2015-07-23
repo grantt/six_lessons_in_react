@@ -70,7 +70,8 @@ React.render(
     &lt;TitleBar /&gt;,
     document.getElementById('container')
 );</code></pre>
-        <p>This function is invoked a single time and cached when the class is created and will be overwritten by any property passed into the component.</p>
+        <p><code>getDefaultProps()</code> is called a single time when the component is first rendered. The values for any property will be overwritten by those of the same name passed into the component.</p>
+
         <h2>Component State</h2>
         <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic data, that affects the rendering of the component. State can only be set from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
@@ -128,13 +129,14 @@ React.render(
     }
 });</code></pre>
         <h2>Triggering Rerendering</h2>
-        <p>Any time the state or properties of a component change, a render update is triggered on the component, the result is passed to the Virtual DOM, diffed against the existing DOM, translated to DOM instructions and rendered on the page. Anything beyond a basic component will likely be stateful so it is important to remember the effects of state change on the layout.</p>
-        <h2>Exercise</h2>
+        <p>Any time the state or properties of a component change, a render update is triggered on the component and the component tree. The result is passed to the Virtual DOM, diffed against the existing DOM, translated to DOM instructions, and rendered on the page. Anything beyond a basic component will likely be stateful so it is important to remember the effects of state change on the layout.</p>
+        <h2>Exercise 1</h2>
         <p>Using the lesson above and the ReactJS documentation, build a simple Hello World component that can accept a name property, default properties for the name, an attribute on the component's state for 'likes' and a handler for updating the state.</p>
         <br />
-        <a href="../lesson_1/exercise.html">Exercise</a>
+        <a href="../lesson_1/exercise_1.html">Exercise 1</a>
         <br />
-        <a href="../lesson_1/solution.html">Solution</a>
+        <a href="../lesson_1/solution_1.html">Solution 1</a>
+
         <h2>Further Reading</h2>
         <ul>
             <li><a href="https://facebook.github.io/react/index.html" target="_blank">React documentation</a></li>
