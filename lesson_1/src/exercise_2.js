@@ -1,4 +1,4 @@
-// Lesson 1 Solution - solution_1.js
+// Lesson 1 Exercise - exercise_2.js
 
 var TitleBar = React.createClass({
     getDefaultProps: function() {

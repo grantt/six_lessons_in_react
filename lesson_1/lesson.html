@@ -137,6 +137,120 @@ React.render(
         <br />
         <a href="../lesson_1/solution_1.html">Solution 1</a>
 
+        <h2>Refactor</h2>
+        <p>To solidify our understanding of the React component tree, props, state, and how those have an effect on what's rendered on the page, let's complicate our above example by refactoring it. Let's refactor the above example to have two components.</p>
+
+        <p>Let's have one component to display the title, subtitle, and the number of likes. And the second component would have the "Like this" button". So essentailly, we'll have one component to handle the display of information to the user, and the other component handles user interaction elements. The first component can actually render the second component.</p>
+
+        <p>Since we already have most of the code for the information display, let's move the button code out of our solution for the previous exercise and into its own React component.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
+    render: function() {
+        return (
+            &lt;button onClick={this.props.handleclick} type="button"&gt;Like this&lt;/button&gt;
+        );
+    }
+});
+
+var TitleBar = React.createClass({
+    ...
+
+    render: function () {
+        return (
+            &lt;div&gt;
+                &lt;h1&gt;{this.props.title}&lt;/h1&gt;
+                &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
+                &lt;span&gt;Likes: {this.state.likes}&lt;/span&gt;
+                &lt;Buttons handleClick={this.handleClick} /&gt;
+            &lt;/div&gt;
+        );
+    }
+});</code></pre>
+
+        <p>You might notice above that to make sure the Hello World app still works, we needed to pass in the <code>TitleBar</code>'s <code>onClick</code> function as a prop to the <code>Buttons</code> component.</p>
+
+        <p>Now that we have a separate component for the like button, let's add a new button: an Unlike button. This button should subtract 1 from the number of likes. In order to do this, let's first modify <code>handleClick</code> in <code>TitleBar</code> to accept a "like" offset.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
+    ...    
+    handleClick: function(offset) {
+        this.setState({
+            likes: this.state.likes + offset
+        });
+    },
+    ...
+});</code></pre>
+
+        <p>We also need to modify <code>Buttons</code> now to call <code>this.props.handleClick</code> with a positive offset of 1.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
+
+    handleLike: function() {
+        this.props.handleClick(1);
+    },
+
+    render: function() {
+        return (
+            &lt;button onClick={this.handleLike} type="button"&gt;Like this&lt;/button&gt;
+        );
+    }
+});</code></pre>
+
+        <p>Now let's add the unlike button that calls <code>this.props.handleClick</code> with an offset of -1.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
+    ...
+    handleUnlike: function() {
+        this.props.handleClick(-1);
+    },
+
+    render: function() {
+        return (
+            &lt;div&gt;
+                &lt;button onClick={this.handleLike} type="button"&gt;Like this&lt;/button&gt;
+                &lt;button onClick={this.handleUnlike} type="button"&gt;Unlike this&lt;/button&gt;
+            &lt;div&gt;
+        );
+    }
+});</code></pre>
+
+        <p>This implementation has a small bug though. It is possible with this implementation to get a negative number of likes. There are a ew ways of doing this, but for this exercise let's fix this by not showing the unlike button if we have 0 likes. In order to do that we need to first pass the number of likes from the <code>TitleBar</code> to the <code>Buttons</code> component.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
+    ...
+    render: function () {
+        return (
+            &lt;div&gt;
+                ...
+                &lt;Buttons handleClick={this.handleClick} likes={this.state.likes} /&gt;
+            &lt;/div&gt;
+        );
+    }
+});</code></pre>
+
+        <p>Now let's update the <code>Buttons</code> component to take the number of likes into account in its <code>render()</code> function.</p>
+
+        <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
+    ...
+    render: function() {
+        return (
+            &lt;div&gt;
+                &lt;button onClick={this.handleLike} type="button"&gt;Like this&lt;/button&gt;
+                { this.props.likes ? &lt;button onClick={this.handleUnlike} type="button"&gt;Unlike this&lt;/button&gt; : null }
+            &lt;div&gt;
+        );
+    }
+});</code></pre>
+
+        <p>And that's it! Now we've refactored our Hello World a little bit, passed a function in as a prop, and added some conditional logic to our rendering based on component props.</p>
+
+        <h2>Exercise 2</h2>
+        <p>Using the  steps above, refactor exercise 1.</p>
+        <br />
+        <a href="../lesson_1/exercise_2.html">Exercise 2</a>
+        <br />
+        <a href="../lesson_1/solution_2.html">Solution 2</a>
+
         <h2>Further Reading</h2>
         <ul>
             <li><a href="https://facebook.github.io/react/index.html" target="_blank">React documentation</a></li>
