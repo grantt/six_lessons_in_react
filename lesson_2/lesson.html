@@ -64,7 +64,7 @@ React.render(
 
 var actions = {
     generateLoremIpsum: function() {
-      this.dispatch(constants.GENERATE_LOREM_IPSUM);
+        this.dispatch(constants.GENERATE_LOREM_IPSUM);
     }
 };</code></pre>
 
@@ -132,9 +132,9 @@ React.render(
         <p>First let's define some new constants for the API success or error responses we might encounter.</p>
 
         <pre><code>var constants = {
-  GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
-  GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
-  GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS'
+    GENERATE_LOREM_IPSUM: 'GENERATE_LOREM_IPSUM',
+    GENERATE_LOREM_IPSUM_ERROR: 'GENERATE_LOREM_IPSUM_ERROR',
+    GENERATE_LOREM_IPSUM_SUCCESS: 'GENERATE_LOREM_IPSUM_SUCCESS'
 };</code></pre>
 
         <p>Now we need to trigger an API call whenever the <code>GENERATE_LOREM_IPSUM</code> action is triggered. On the failure or success of that call, we can dispatch the respective action to the dispatcher. So the first argument to <code>this.dispatch</code> will be the action type, and the second will be the data (if any) we want to send to the stores that are listening.</p>
@@ -232,11 +232,11 @@ React.render(
         return (
             &lt;div>
                 &lt;textarea
-                rows={this.props.textAreaRows}
-                cols={this.props.textAreaCols}
-                ref="markdownTextarea"
-                value={this.state.document.text}
-                onChange={this.handleOnChange}
+                    rows={this.props.textAreaRows}
+                    cols={this.props.textAreaCols}
+                    ref="markdownTextarea"
+                    value={this.state.document.text}
+                    onChange={this.handleOnChange}
                 /&gt;
                 &lt;br /&gt;
                 &lt;button onClick={this.handleLoremIpsumClick}>Get Lorem Ipsum!&lt;/button&gt;
