@@ -121,7 +121,7 @@ React.render(
         <h2>Refactor</h2>
         <p>To solidify our understanding of the React component tree, props, state, and how those have an effect on what's rendered on the page, let's complicate our above example by refactoring it. Let's refactor the above example to have two components.</p>
 
-        <p>Let's have one component to display the title, subtitle, and the number of likes. And the second component would have the "Like this" button". So essentially, we'll have one component to handle the display of information to the user, and the other component handles user interaction elements. The first component can actually render the second component.</p>
+        <p>Let's have one component to display the title, subtitle, and the number of likes. And the second component would have the "Like this" button. So essentially, we'll have one component to handle the display of information to the user, and the other component handles user interaction elements. The first component can actually render the second component.</p>
 
         <p>Since we already have most of the code for the information display, let's move the button code out of our solution for the previous exercise and into its own React component.</p>
 
@@ -195,7 +195,7 @@ var TitleBar = React.createClass({
     }
 });</code></pre>
 
-        <p>This implementation has a small bug though. It is possible with this implementation to get a negative number of likes. There are a ew ways of doing this, but for this exercise let's fix this by not showing the unlike button if we have 0 likes. In order to do that we need to first pass the number of likes from the <code>TitleBar</code> to the <code>Buttons</code> component.</p>
+        <p>This implementation has a small bug though. It is possible with this implementation to get a negative number of likes. There are a few ways of doing this, but for this exercise let's fix this by not showing the unlike button if we have 0 likes. In order to do that we need to first pass the number of likes from the <code>TitleBar</code> to the <code>Buttons</code> component.</p>
 
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
     ...
