@@ -422,13 +422,13 @@ var MarkdownEditor = React.createClass({
     // text area editable for users
     handleOnChange: function(event) {
         var flux = this.getFlux();
-        var state = _.extend(this.state.document, {text: event.target.value});
+        var state = _.extend(this.state.activeDocument, {text: event.target.value});
         this.setState(
             {
                 document: state
             }
         );
-        flux.actions.updatePreview(this.state.document.text);
+        flux.actions.updatePreview(this.state.activeDocument.text);
     },
 
     setHoverTrue: function() {
@@ -541,7 +541,7 @@ var MarkdownPreview = React.createClass({
         return (
             React.createElement("div", {style: this.styles.container}, 
                 React.createElement("h2", null, this.state.activeDocument.title, " Preview"), 
-            div
+                div
             )
         )
     }
@@ -552,8 +552,14 @@ var MarkdownViewer = React.createClass({
     displayName : 'MarkdownViewer',
 
     mixins: [
-        FluxMixin
+        FluxMixin,
+        Fluxxor.StoreWatchMixin('DocumentsStore')
     ],
+
+    getStateFromFlux: function() {
+        var flux = this.getFlux();
+        return flux.store('DocumentsStore').getState();
+    },
 
     render: function() {
         if (this.state.documents.length > 0) {
@@ -568,9 +574,7 @@ var MarkdownViewer = React.createClass({
                 )
             )
         } else {
-            return (
-                React.createElement("div", null)
-            )
+            return null;
         }
 
     }
