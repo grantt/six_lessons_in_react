@@ -223,6 +223,7 @@ React.render(
     // with value attributes are considered "controlled", and as such
     // the textarea would not be editable by users. this makes the
     // text area editable for users
+    // see: https://facebook.github.io/react/docs/forms.html#controlled-components
     handleOnChange: function(event) {
         this.setState({markdownInput: event.target.value});
     },
