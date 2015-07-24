@@ -60,8 +60,10 @@ React.render(
 
     render: function () {
         return (
-            &lt;h1&gt;{this.props.title}&lt;/h1&gt;
-            &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
+            &lt;div&gt;
+                &lt;h1&gt;{this.props.title}&lt;/h1&gt;
+                &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
+            &lt;div&gt;
         );
     }
 });
@@ -74,29 +76,7 @@ React.render(
 
         <h2>Component State</h2>
         <p>Whereas properties are only defined at the instantiation of a component, state in a React component is associated with the dynamic data, that affects the rendering of the component. State can only be set from within the component and changes over the lifecycle of the component. State can be set via the <code>setState()</code> method on the component typically used to handle user interaction or handle a response from an AJAX call to a server. For example here is a click handler utilizing <code>setState()</code> which increments the number of likes on our component:</p>
-        <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
-    getDefaultProps: function() {
-        return {
-            title: 'A Title',
-            subtitle: 'Just a Subtitle'
-        };
-    },
 
-    handleClick: function() {
-        this.setState({
-            likes: this.state.likes + 1
-        });
-    },
-
-    render: function () {
-        return (
-            &lt;div&gt;
-                &lt;h1&gt;{this.props.title}&lt;/h1&gt;
-                &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
-            &lt;/div&gt;
-        );
-    }
-});</code></pre>
         <h2>Initial State of a Component</h2>
         <p>In addition to setting the state within the component, it is also useful to have an initial state for which the component can render itself properly. For the above example this would likely be the instantiation of the likes at 0 so as to properly increment them upon clicks. This is accomplished via the <code>getInitialState()</code> method:
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
@@ -132,6 +112,7 @@ React.render(
         <p>Any time the state or properties of a component change, a render update is triggered on the component and the component tree. The result is passed to the Virtual DOM, diffed against the existing DOM, translated to DOM instructions, and rendered on the page. Anything beyond a basic component will likely be stateful so it is important to remember the effects of state change on the layout.</p>
         <h2>Exercise 1</h2>
         <p>Using the lesson above and the ReactJS documentation, build a simple Hello World component that can accept a name property, default properties for the name, an attribute on the component's state for 'likes' and a handler for updating the state.</p>
+        <p>You can add your code to <code>lesson_1/src/exercise_1.js</code> and click on the "Exercise 1" link below to see your code in action!</p>
         <br />
         <a href="../lesson_1/exercise_1.html">Exercise 1</a>
         <br />
@@ -246,6 +227,8 @@ var TitleBar = React.createClass({
 
         <h2>Exercise 2</h2>
         <p>Using the  steps above, refactor exercise 1.</p>
+
+        <p>You can add your code to <code>lesson_1/src/exercise_2.js</code> and click on the "Exercise 2" link below to see your code in action!</p>
         <br />
         <a href="../lesson_1/exercise_2.html">Exercise 2</a>
         <br />
