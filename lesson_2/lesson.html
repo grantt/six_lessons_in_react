@@ -225,7 +225,8 @@ React.render(
     // text area editable for users
     // see: https://facebook.github.io/react/docs/forms.html#controlled-components
     handleOnChange: function(event) {
-        this.setState({markdownInput: event.target.value});
+        var newState = _.extend({}, this.state.document, { text: event.target.value });
+        this.setState({ document: newState });
     },
 
     render: function() {
