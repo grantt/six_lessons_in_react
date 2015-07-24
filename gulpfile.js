@@ -28,7 +28,7 @@ gulp.task('transform', function(){
     .pipe(gulp.dest('./'))
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', ['transform'], function () {
   gulp.watch(paths.scripts, ['transform', reload]);
 });
 
