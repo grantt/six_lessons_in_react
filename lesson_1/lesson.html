@@ -11,9 +11,9 @@
         <h2>Basic Component</h2>
         <p>In this lesson we're going to go through basic React Component properties and methods by building a simple "Hello World" component.</p>
         <p><code class="language-javascript" data-lang="javascript">React.createClass()</code> is the React method used to instantiate a component. Typically this is assigned to a javascript variable in the form of:</p>
-        <pre><code class="language-javascript" data-lang="javascript">var reactComponent = React.createClass({});</code></pre>
+        <pre><code class="language-javascript" data-lang="javascript">var ReactComponent = React.createClass({});</code></pre>
         <p><code>React.createClass()</code> has a number of expected base methods that can be used to control the state and display of the component. Chief among these is the <code>render()</code> method, used to display the component in the DOM by declaring a JSX markup return value. For example:</p>
-        <pre><code class="language-javascript" data-lang="javascript">var reactComponent = React.createClass({
+        <pre><code class="language-javascript" data-lang="javascript">var ReactComponent = React.createClass({
     render: function () {
         return (
             &lt;div&gt;
@@ -22,7 +22,7 @@
         );
     }
 });</code></pre>
-        <p>This method returns a tree of React components that can be rendered into the DOM by <code class="language-text" data-lang="javascript">React.render()</code>. The tree of components in this case is a single React <code class="language-javascript" data-lang="javascript">div</code> component rather than the action <code class="language-text" data-lang="javascript">&lt;div&gt;</code> DOM node. This means that instead of returning HTML itself we can return other complex React components and build a fully composable application.</p>
+        <p>This <code>render()</code> method returns a tree of React elements that can be rendered into the DOM by <code class="language-text" data-lang="javascript">React.render()</code>. The tree of components in this case is a single React <code class="language-javascript" data-lang="javascript">div</code> component rather than the action <code class="language-text" data-lang="javascript">&lt;div&gt;</code> DOM node. This means that instead of returning HTML itself we can return other complex React components that you can mix and match to build a fully composable application.</p>
         <h2>Rendering a React Component</h2>
         <p><code class="language-javascript" data-lang="javascript">React.render()</code> injects React components into the DOM by instantiating a component, a single component or root component, and defining a destination DOM node. In the case of</p>
         <pre><code class="language-javascript" data-lang="javascript">React.render(
