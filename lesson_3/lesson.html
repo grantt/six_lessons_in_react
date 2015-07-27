@@ -54,7 +54,7 @@ var DocumentStore = Fluxxor.createStore({
 
     onUpdatePreview: function(currentInput) {
         // tells whatever views are listening that the data has changed
-        this.document.text = payload;
+        this.document.text = currentInput;
         this.emit('change');
     },
     ...
@@ -96,6 +96,7 @@ var DocumentStore = Fluxxor.createStore({
 });</code></pre>
     <h2>Exercise</h2>
     <p>Using the lesson above and the Further Reading section, add a preview component capable of rendering the Markdown in the original textarea component.</p>
+    <p>You can add your code to <code>lesson_3/src/exercise.js</code> and click on the "Exercise" link below to see your code in action!</p>
     <a href="../lesson_3/exercise.html">Exercise</a>
     <br />
     <a href="../lesson_3/solution.html">Solution</a>
