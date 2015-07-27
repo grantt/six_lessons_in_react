@@ -2,11 +2,11 @@
 
 var Buttons = React.createClass({
     handleLike: function() {
-        this.props.handleClick(1);
+        this.props.handleIncrement(1);
     },
 
     handleUnlike: function() {
-        this.props.handleClick(-1);
+        this.props.handleIncrement(-1);
     },
 
     render: function() {
@@ -31,7 +31,7 @@ var TitleBar = React.createClass({
             likes: 0
         }
     },
-    handleClick: function(offset) {
+    handleIncrement: function(offset) {
         this.setState({
             likes: this.state.likes + offset
         });
@@ -42,7 +42,7 @@ var TitleBar = React.createClass({
                 <h1>{this.props.title}</h1>
                 <h2>{this.props.subtitle}</h2>
                 <span>Likes: {this.state.likes}</span>
-                <Buttons handleClick={this.handleClick} likes={this.state.likes} />
+                <Buttons handleIncrement={this.handleIncrement} likes={this.state.likes} />
             </div>
         )
     }
