@@ -54,7 +54,7 @@ var DocumentStore = Fluxxor.createStore({
 
     onUpdatePreview: function(currentInput) {
         // tells whatever views are listening that the data has changed
-        this.document.text = payload;
+        this.document.text = currentInput;
         this.emit('change');
     },
     ...
