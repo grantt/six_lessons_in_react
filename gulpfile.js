@@ -1,7 +1,6 @@
 var gulp = require('gulp'),
-    rename = require('gulp-rename'),
-    react = require('gulp-react'),
     path = require('path'),
+    $ = require('gulp-load-plugins')(),
     browserSync = require('browser-sync'),
     reload = browserSync.reload;
   
@@ -22,9 +21,8 @@ gulp.task('server', function() {
 
 gulp.task('transform', function(){
     return gulp.src(paths.scripts)
-        .pipe
-        .pipe(react())
-        .pipe(rename(function(file) {
+        .pipe($.react())
+        .pipe($.rename(function(file) {
             file.dirname = file.dirname.replace('/src', '/build');
         }))
         .pipe(gulp.dest('./'))
