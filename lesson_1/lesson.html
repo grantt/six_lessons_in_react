@@ -91,7 +91,7 @@ React.render(
         return { likes: 0 };
     },
 
-    handleClick: function() {
+    handleIncrement: function() {
         this.setState({
             likes: this.state.likes + 1
         });
@@ -103,7 +103,7 @@ React.render(
                 &lt;h1&gt;{this.props.title}&lt;/h1&gt;
                 &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
                 &lt;span&gt;Likes: {this.state.likes}&lt;/span&gt;
-                &lt;button onClick={this.handleClick} type="button"&gt;Like this&lt;/button&gt;
+                &lt;button onClick={this.handleIncrement} type="button"&gt;Like this&lt;/button&gt;
             &lt;/div&gt;
         );
     }
@@ -128,7 +128,7 @@ React.render(
         <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
     render: function() {
         return (
-            &lt;button onClick={this.props.handleclick} type="button"&gt;Like this&lt;/button&gt;
+            &lt;button onClick={this.props.handleIncrement} type="button"&gt;Like this&lt;/button&gt;
         );
     }
 });
@@ -142,7 +142,7 @@ var TitleBar = React.createClass({
                 &lt;h1&gt;{this.props.title}&lt;/h1&gt;
                 &lt;h2&gt;{this.props.subtitle}&lt;/h2&gt;
                 &lt;span&gt;Likes: {this.state.likes}&lt;/span&gt;
-                &lt;Buttons handleClick={this.handleClick} /&gt;
+                &lt;Buttons handleIncrement={this.handleIncrement} /&gt;
             &lt;/div&gt;
         );
     }
@@ -150,11 +150,11 @@ var TitleBar = React.createClass({
 
         <p>You might notice above that to make sure the Hello World app still works, we needed to pass in the <code>TitleBar</code>'s <code>onClick</code> function as a prop to the <code>Buttons</code> component.</p>
 
-        <p>Now that we have a separate component for the like button, let's add a new button: an Unlike button. This button should subtract 1 from the number of likes. In order to do this, let's first modify <code>handleClick</code> in <code>TitleBar</code> to accept a "like" offset.</p>
+        <p>Now that we have a separate component for the like button, let's add a new button: an Unlike button. This button should subtract 1 from the number of likes. In order to do this, let's first modify <code>handleIncrement</code> in <code>TitleBar</code> to accept a "like" offset.</p>
 
         <pre><code class="language-javascript" data-lang="javascript">var TitleBar = React.createClass({
     ...    
-    handleClick: function(offset) {
+    handleIncrement: function(offset) {
         this.setState({
             likes: this.state.likes + offset
         });
@@ -162,12 +162,12 @@ var TitleBar = React.createClass({
     ...
 });</code></pre>
 
-        <p>We also need to modify <code>Buttons</code> now to call <code>this.props.handleClick</code> with a positive offset of 1.</p>
+        <p>We also need to modify <code>Buttons</code> now to call <code>this.props.handleIncrement</code> with a positive offset of 1.</p>
 
         <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
 
     handleLike: function() {
-        this.props.handleClick(1);
+        this.props.handleIncrement(1);
     },
 
     render: function() {
@@ -177,12 +177,12 @@ var TitleBar = React.createClass({
     }
 });</code></pre>
 
-        <p>Now let's add the unlike button that calls <code>this.props.handleClick</code> with an offset of -1.</p>
+        <p>Now let's add the unlike button that calls <code>this.props.handleIncrement</code> with an offset of -1.</p>
 
         <pre><code class="language-javascript" data-lang="javascript">var Buttons = React.createClass({
     ...
     handleUnlike: function() {
-        this.props.handleClick(-1);
+        this.props.handleIncrement(-1);
     },
 
     render: function() {
@@ -203,7 +203,7 @@ var TitleBar = React.createClass({
         return (
             &lt;div&gt;
                 ...
-                &lt;Buttons handleClick={this.handleClick} likes={this.state.likes} /&gt;
+                &lt;Buttons handleIncrement={this.handleIncrement} likes={this.state.likes} /&gt;
             &lt;/div&gt;
         );
     }

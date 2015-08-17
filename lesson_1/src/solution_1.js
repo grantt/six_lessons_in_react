@@ -12,7 +12,7 @@ var TitleBar = React.createClass({
             likes: 0
         }
     },
-    handleClick: function() {
+    handleIncrement: function() {
         this.setState({
             likes: this.state.likes + 1
         });
@@ -23,7 +23,7 @@ var TitleBar = React.createClass({
                 <h1>{this.props.title}</h1>
                 <h2>{this.props.subtitle}</h2>
                 <span>Likes: {this.state.likes}</span>
-                <button onClick={this.handleClick} type="button">Like this</button>
+                <button onClick={this.handleIncrement} type="button">Like this</button>
             </div>
         )
     }
